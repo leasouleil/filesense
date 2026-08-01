@@ -29,28 +29,18 @@ def get_text_for_file(filepath):
 
 class MyHandler(FileSystemEventHandler):
 
-    def on_created(self, event):
-        filename = os.path.basename(event.src_path)
+    def process_file(filepath):
+        filename = os.path.basename(filepath)
         extension = os.path.splitext(filename)[1].lower()
 
         print(filename)
         print(extension)
 
         ignored_extensions = [".tmp", ".crdownload", ".part"]
-
         if extension in ignored_extensions:
             return
 
         time.sleep(1)
-        
-        filepath = event.src_path
-
-        # Optional but helpful: skip directories
-        if event.is_directory:
-            return
-
-        # Optional: brief wait so downloads finish writing (see improvement #6 later)
-        time.sleep(0.5)
 
         text = get_text_for_file(filepath)
         category = classify(filename, text)
@@ -58,34 +48,43 @@ class MyHandler(FileSystemEventHandler):
         print(category)
 
         category = category.strip()
-        # Optional: take first line only
         category = category.split("\n")[0].strip()
-        # Optional: case-insensitive match
+
+        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images"]
+
         for allowed in allowed_categories:
             if category.lower() == allowed.lower():
                 category = allowed
                 break
 
-        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images"]
-
         if category not in allowed_categories:
             print(f"Unknown category: {category}")
             category = "Uncategorized"
 
-        
         destination_folder = os.path.join("Sorted", category)
-
         os.makedirs(destination_folder, exist_ok=True)
 
         destination_file = os.path.join(destination_folder, filename)
 
         if os.path.exists(destination_file):
             print("Duplicate found")
-            return
-
-        shutil.move(event.src_path, destination_file)
+            base, ext = os.path.splitext(filename)
+            dest = destination_file
+            n = 1
+            while os.path.exists(dest):
+                dest = os.path.join(destination_folder, f"{base} ({n}){ext}")
+                n += 1
+            shutil.move(filepath, dest)
+        else:
+            shutil.move(filepath, destination_file)
 
         print(f"Moved {filename} to {destination_folder}")
+
+
+    def on_created(self, event):
+        if event.is_directory:
+            return
+        self.process_file(event.src_path)
 
 observer = Observer()
 handler = MyHandler()
