@@ -2,18 +2,17 @@ import requests
 
 def classify(filename, text):
     prompt = f"""
-Classify this file into EXACTLY ONE of these categories
+Classify this file into one of these categories
 
 Categories:
 Finance
 School
 Programming
 Personal
-Images
 Installer
 
 Rules:
-- Respond with ONLY the category word. Nothing else.
+- Respond with only the category word. Nothing else.
 - No explanation, no punctuation, no alternate options.
 - If unsure, pick the single most likely category.
 
