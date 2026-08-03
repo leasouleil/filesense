@@ -1,4 +1,5 @@
 import requests
+from logger import logger
 
 def classify(filename, text):
     prompt = f"""
@@ -14,7 +15,7 @@ Installer
 Rules:
 - Respond with only the category word. Nothing else.
 - No explanation, no punctuation, no alternate options.
-- Installers = setup/install executables (.exe, .msi) for software, drivers, or SDKs — even if the software itself is dev-related.
+- Installer = setup/install executables (.exe, .msi) for software, drivers, or SDKs — even if the software itself is dev-related.
 - If unsure, pick the single most likely category.
 
 Filename:
@@ -35,5 +36,5 @@ Return only the category.
         return response.json()["response"].strip()
 
     except requests.RequestException as e:
-        print(f"Ollama error: {e}")
+        logger.error(f"Ollama error: {e}")
         return "Uncategorized"

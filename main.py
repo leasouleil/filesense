@@ -9,7 +9,7 @@ from docxreader import extract_docx_text
 from xlsxreader import extract_xlsx_text
 from imagereader import extract_image_text
 from exereader import extract_exe_metadata
-import time
+from logger import logger
 
 def wait_until_stable(filepath, checks=3, interval=1):
     last_size = -1
@@ -38,9 +38,9 @@ def safe_move(src, dest, retries=5, delay=1):
             shutil.move(src, dest)
             return True
         except PermissionError as e:
-            print(f"Move failed (attempt {attempt + 1}/{retries}): {e}")
+            logger.error(f"Move failed (attempt {attempt + 1}/{retries}): {e}")
             time.sleep(delay)
-    print(f"Failed to move {src} after {retries} attempts.")
+    logger.error(f"Failed to move {src} after {retries} attempts.")
     return False
 
 def get_text_for_file(filepath):
@@ -50,35 +50,35 @@ def get_text_for_file(filepath):
         try:
             return extract_pdf_text(filepath)
         except Exception as e:
-            print(f"Could not read PDF: {e}")
+            logger.error(f"Could not read PDF: {e}")
             return ""
 
     if extension == ".docx":
         try:
             return extract_docx_text(filepath)
         except Exception as e:
-            print(f"Could not read docx: {e}")
+            logger.error(f"Could not read docx: {e}")
             return ""
 
     if extension == ".xlsx":
         try:
             return extract_xlsx_text(filepath)
         except Exception as e:
-            print(f"Could not read xlsx: {e}")
+            logger.error(f"Could not read xlsx: {e}")
             return ""
 
     if extension in (".png", ".jpg", ".jpeg"):
         try:
             return extract_image_text(filepath)
         except Exception as e:
-            print(f"Could not read image: {e}")
+            logger.error(f"Could not read image: {e}")
             return ""
 
     if extension == ".exe":
         try:
             return extract_exe_metadata(filepath)
         except Exception as e:
-            print(f"Could not read exe: {e}")
+            logger.error(f"Could not read exe: {e}")
             return ""
 
     # Plain text files — add when you’re ready
@@ -87,7 +87,7 @@ def get_text_for_file(filepath):
             with open(filepath, encoding="utf-8", errors="ignore") as f:
                 return f.read()
         except Exception as e:
-            print(f"Could not read text file: {e}")
+            logger.error(f"Could not read text file: {e}")
             return ""
 
     return ""
@@ -95,7 +95,7 @@ def get_text_for_file(filepath):
 
 def process_file(filepath):
         if not wait_until_stable(filepath):
-            print(f"Skipping {filepath} — file not stable or disappeared.")
+            logger.info(f"Skipping {filepath} — file not stable or disappeared.")
             return
         
         filename = os.path.basename(filepath)
@@ -150,9 +150,9 @@ def process_file(filepath):
             moved = safe_move(filepath, destination_file)
 
         if moved:
-            print(f"Moved {filename} to {destination_folder}")
+            logger.info(f"Moved {filename} to {destination_folder}")
         else:
-            print(f"Could not move {filename} — still locked after retries.")
+            logger.error(f"Could not move {filename} — still locked after retries.")
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):

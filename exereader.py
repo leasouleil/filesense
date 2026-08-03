@@ -1,4 +1,5 @@
 import pefile
+from logger import logger
 
 def extract_exe_metadata(filepath):
     text = ""
@@ -17,7 +18,7 @@ def extract_exe_metadata(filepath):
                                 val_str = value.decode(errors="ignore") if isinstance(value, bytes) else value
                                 text += f"{key_str}: {val_str}\n"
     except Exception as e:
-        print(f"Could not read exe metadata: {e}")
+        logger.error(f"Could not read exe metadata: {e}")
     finally:
         if pe is not None:
             pe.close()
