@@ -10,6 +10,7 @@ from xlsxreader import extract_xlsx_text
 from imagereader import extract_image_text
 from exereader import extract_exe_metadata
 from logger import logger
+from config import config
 
 def wait_until_stable(filepath, checks=3, interval=1):
     last_size = -1
@@ -121,7 +122,7 @@ def process_file(filepath):
         category = category.strip()
         category = category.split("\n")[0].strip()
 
-        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images", "Installer"]
+        allowed_categories = config["allowed_categories"]
 
         for allowed in allowed_categories:
             if category.lower() == allowed.lower():
@@ -132,7 +133,7 @@ def process_file(filepath):
             print(f"Unknown category: {category}")
             category = "Uncategorized"
 
-        destination_folder = os.path.join("Sorted", category)
+        destination_folder = os.path.join(config["sorted_folder"], category)
         os.makedirs(destination_folder, exist_ok=True)
 
         destination_file = os.path.join(destination_folder, filename)
@@ -163,7 +164,7 @@ class MyHandler(FileSystemEventHandler):
 observer = Observer()
 handler = MyHandler()
 
-observer.schedule(handler, path="Downloads_Test", recursive=False)
+observer.schedule(handler, path=config["watch_folder"], recursive=False)
 
 observer.start()
 

@@ -11,6 +11,7 @@ School
 Programming
 Personal
 Installer
+Forms
 
 Rules:
 - Respond with only the category word. Nothing else.

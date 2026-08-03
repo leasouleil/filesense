@@ -1,0 +1,14 @@
+{
+  "watch_folder": "Downloads_Test",
+  "sorted_folder": "Sorted",
+  "model": "llama3.2",
+  "enable_ocr": true,
+  "allowed_categories": [
+    "Finance",
+    "School",
+    "Programming",
+    "Personal",
+    "Forms",
+    "Installer"
+  ]
+}
