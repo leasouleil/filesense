@@ -5,6 +5,10 @@ import os
 import shutil
 from classifier import classify
 from pdfreader import extract_pdf_text
+from docxreader import extract_docx_text
+from xlsxreader import extract_xlsx_text
+from imagereader import extract_image_text
+from exereader import extract_exe_metadata
 
 def get_text_for_file(filepath):
     extension = os.path.splitext(filepath)[1].lower()
@@ -14,6 +18,34 @@ def get_text_for_file(filepath):
             return extract_pdf_text(filepath)
         except Exception as e:
             print(f"Could not read PDF: {e}")
+            return ""
+
+    if extension == ".docx":
+        try:
+            return extract_docx_text(filepath)
+        except Exception as e:
+            print(f"Could not read docx: {e}")
+            return ""
+
+    if extension == ".xlsx":
+        try:
+            return extract_xlsx_text(filepath)
+        except Exception as e:
+            print(f"Could not read xlsx: {e}")
+            return ""
+
+    if extension in (".png", ".jpg", ".jpeg"):
+        try:
+            return extract_image_text(filepath)
+        except Exception as e:
+            print(f"Could not read image: {e}")
+            return ""
+
+    if extension == ".exe":
+        try:
+            return extract_exe_metadata(filepath)
+        except Exception as e:
+            print(f"Could not read exe: {e}")
             return ""
 
     # Plain text files — add when you’re ready
@@ -27,9 +59,8 @@ def get_text_for_file(filepath):
 
     return ""
 
-class MyHandler(FileSystemEventHandler):
 
-    def process_file(filepath):
+def process_file(filepath):
         filename = os.path.basename(filepath)
         extension = os.path.splitext(filename)[1].lower()
 
@@ -50,7 +81,7 @@ class MyHandler(FileSystemEventHandler):
         category = category.strip()
         category = category.split("\n")[0].strip()
 
-        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images"]
+        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images", "Installers"]
 
         for allowed in allowed_categories:
             if category.lower() == allowed.lower():
@@ -80,11 +111,11 @@ class MyHandler(FileSystemEventHandler):
 
         print(f"Moved {filename} to {destination_folder}")
 
-
+class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
         if event.is_directory:
             return
-        self.process_file(event.src_path)
+        process_file(event.src_path)
 
 observer = Observer()
 handler = MyHandler()
