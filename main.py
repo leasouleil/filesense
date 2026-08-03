@@ -9,6 +9,39 @@ from docxreader import extract_docx_text
 from xlsxreader import extract_xlsx_text
 from imagereader import extract_image_text
 from exereader import extract_exe_metadata
+import time
+
+def wait_until_stable(filepath, checks=3, interval=1):
+    last_size = -1
+    stable_count = 0
+
+    while stable_count < checks:
+        try:
+            current_size = os.path.getsize(filepath)
+        except FileNotFoundError:
+            return False  # file vanished (renamed, deleted, still writing under temp name)
+
+        if current_size == last_size:
+            stable_count += 1
+        else:
+            stable_count = 0
+
+        last_size = current_size
+        time.sleep(interval)
+
+    return True
+
+
+def safe_move(src, dest, retries=5, delay=1):
+    for attempt in range(retries):
+        try:
+            shutil.move(src, dest)
+            return True
+        except PermissionError as e:
+            print(f"Move failed (attempt {attempt + 1}/{retries}): {e}")
+            time.sleep(delay)
+    print(f"Failed to move {src} after {retries} attempts.")
+    return False
 
 def get_text_for_file(filepath):
     extension = os.path.splitext(filepath)[1].lower()
@@ -61,6 +94,10 @@ def get_text_for_file(filepath):
 
 
 def process_file(filepath):
+        if not wait_until_stable(filepath):
+            print(f"Skipping {filepath} — file not stable or disappeared.")
+            return
+        
         filename = os.path.basename(filepath)
         extension = os.path.splitext(filename)[1].lower()
 
@@ -71,7 +108,10 @@ def process_file(filepath):
         if extension in ignored_extensions:
             return
 
-        time.sleep(1)
+        if extension == ".exe":
+            time.sleep(3)  # give AV scanner more time on installers
+        else:
+            time.sleep(1)
 
         text = get_text_for_file(filepath)
         category = classify(filename, text)
@@ -81,7 +121,7 @@ def process_file(filepath):
         category = category.strip()
         category = category.split("\n")[0].strip()
 
-        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images", "Installers"]
+        allowed_categories = ["Finance", "School", "Programming", "Personal", "Images", "Installer"]
 
         for allowed in allowed_categories:
             if category.lower() == allowed.lower():
@@ -105,11 +145,14 @@ def process_file(filepath):
             while os.path.exists(dest):
                 dest = os.path.join(destination_folder, f"{base} ({n}){ext}")
                 n += 1
-            shutil.move(filepath, dest)
+            moved = safe_move(filepath, dest)
         else:
-            shutil.move(filepath, destination_file)
+            moved = safe_move(filepath, destination_file)
 
-        print(f"Moved {filename} to {destination_folder}")
+        if moved:
+            print(f"Moved {filename} to {destination_folder}")
+        else:
+            print(f"Could not move {filename} — still locked after retries.")
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):

@@ -2,6 +2,7 @@ import pefile
 
 def extract_exe_metadata(filepath):
     text = ""
+    pe = None
 
     try:
         pe = pefile.PE(filepath)
@@ -17,5 +18,8 @@ def extract_exe_metadata(filepath):
                                 text += f"{key_str}: {val_str}\n"
     except Exception as e:
         print(f"Could not read exe metadata: {e}")
+    finally:
+        if pe is not None:
+            pe.close()
 
     return text
