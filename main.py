@@ -11,6 +11,7 @@ from imagereader import extract_image_text
 from exereader import extract_exe_metadata
 from logger import logger
 from config import config
+from database import initialize_database, save_history
 
 def wait_until_stable(filepath, checks=3, interval=1):
     last_size = -1
@@ -151,6 +152,14 @@ def process_file(filepath):
             moved = safe_move(filepath, destination_file)
 
         if moved:
+
+            save_history(
+            filename,
+            category,
+            filepath,
+            destination_file
+        )
+
             logger.info(f"Moved {filename} to {destination_folder}")
         else:
             logger.error(f"Could not move {filename} — still locked after retries.")
@@ -160,6 +169,8 @@ class MyHandler(FileSystemEventHandler):
         if event.is_directory:
             return
         process_file(event.src_path)
+
+initialize_database()
 
 observer = Observer()
 handler = MyHandler()
