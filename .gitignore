@@ -6,6 +6,8 @@ Sorted/
 Downloads_Test/
 *.pdf
 
+filesense.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
