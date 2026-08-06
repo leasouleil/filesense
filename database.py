@@ -121,3 +121,30 @@ def undo_move(record_id):
     shutil.move(new_path, original_path)
 
     return True
+
+def get_latest_record():
+
+    conn = sqlite3.connect("filesense.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM file_history
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    return row
+
+def undo_latest():
+
+    record = get_latest_record()
+
+    if not record:
+        return False
+
+    return undo_move(record[0])
