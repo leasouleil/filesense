@@ -107,8 +107,8 @@ def undo_move(record_id):
     if not record:
         return False
 
-    original_path = record[2]
-    new_path = record[3]
+    original_path = record[3]
+    new_path = record[4]
 
     if not os.path.exists(new_path):
         return False
