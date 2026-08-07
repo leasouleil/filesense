@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# FileSense runtime data -- never ship real client config/db/logs
+config/config.json
+*.db
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

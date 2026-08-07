@@ -1,0 +1,8 @@
+watchdog
+requests
+pypdf
+python-docx
+openpyxl
+Pillow
+pytesseract
+pefile
