@@ -6,6 +6,7 @@ build/
 dist/
 .venv/
 venv/
+node_modules/
 
 # FileSense runtime data -- never ship real client config/db/logs
 config/config.json
