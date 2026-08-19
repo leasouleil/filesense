@@ -1,32 +1,60 @@
-function Sidebar() {
+interface SidebarProps {
+  activePage: string
+  onNavigate: (page: string) => void
+}
+
+function Sidebar({ activePage, onNavigate }: SidebarProps) {
+  const navigation = [
+    {
+      name: 'Dashboard',
+      id: 'dashboard',
+    },
+    {
+      name: 'History',
+      id: 'history',
+    },
+    {
+      name: 'Search',
+      id: 'search',
+    },
+    {
+      name: 'Settings',
+      id: 'settings',
+    },
+  ]
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 border-r border-slate-800 bg-slate-900 p-6">
+    <aside className="fixed left-0 top-0 h-screen w-52 border-r border-fs-border bg-fs-sidebar p-5">
+      {/* Branding */}
       <div className="mb-10">
-        <h1 className="text-2xl font-bold text-emerald-400">
+        <h1 className="text-lg font-semibold text-fs-text-primary">
           FileSense
         </h1>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-xs text-fs-text-muted">
           Smart file organization
         </p>
       </div>
 
-      <nav className="space-y-2">
-        <button className="w-full rounded-lg bg-emerald-500/10 px-4 py-3 text-left text-emerald-400">
-          Dashboard
-        </button>
+      {/* Navigation */}
+      <nav className="space-y-1">
+        {navigation.map((item) => {
+          const isActive = activePage === item.id
 
-        <button className="w-full rounded-lg px-4 py-3 text-left text-slate-400 hover:bg-slate-800">
-          History
-        </button>
-
-        <button className="w-full rounded-lg px-4 py-3 text-left text-slate-400 hover:bg-slate-800">
-          Search
-        </button>
-
-        <button className="w-full rounded-lg px-4 py-3 text-left text-slate-400 hover:bg-slate-800">
-          Settings
-        </button>
+          return (
+            <button
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              className={`w-full rounded-md px-3 py-2 text-left text-sm transition ${
+                isActive
+                  ? 'bg-fs-surface text-fs-text-primary'
+                  : 'text-fs-text-secondary hover:bg-fs-surface hover:text-fs-text-primary'
+              }`}
+            >
+              {item.name}
+            </button>
+          )
+        })}
       </nav>
     </aside>
   )
