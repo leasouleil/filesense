@@ -30,10 +30,14 @@ const mockResults: SearchResult[] = [
 
 interface SearchBarProps {
   onViewAll: (query: string) => void
+  initialQuery?: string
 }
 
-function SearchBar({ onViewAll }: SearchBarProps) {
-  const [query, setQuery] = useState('')
+function SearchBar({
+  onViewAll,
+  initialQuery = '',
+}: SearchBarProps) {
+  const [query, setQuery] = useState(initialQuery)
 
   const filteredResults = mockResults.filter((file) =>
     file.fileName.toLowerCase().includes(query.toLowerCase())
@@ -50,12 +54,17 @@ function SearchBar({ onViewAll }: SearchBarProps) {
         </span>
 
         <input
-          type="text"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search your files..."
-          className="w-full bg-transparent text-sm text-fs-text-primary outline-none placeholder:text-fs-text-muted"
-        />
+            type="text"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+                if (event.key === 'Enter' && query.trim()) {
+                onViewAll(query.trim())
+                }
+            }}
+            placeholder="Search your files..."
+            className="w-full bg-transparent text-sm text-fs-text-primary outline-none placeholder:text-fs-text-muted"
+            />
       </div>
 
       {/* Results dropdown */}
