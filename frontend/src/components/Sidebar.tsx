@@ -14,10 +14,6 @@ function Sidebar({ activePage, onNavigate }: SidebarProps) {
       id: 'history',
     },
     {
-      name: 'Search',
-      id: 'search',
-    },
-    {
       name: 'Settings',
       id: 'settings',
     },

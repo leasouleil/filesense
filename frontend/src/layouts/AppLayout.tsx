@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import Sidebar from '../components/Sidebar'
-
 import Dashboard from '../pages/Dashboard'
 import History from '../pages/History'
 import Search from '../pages/Search'
@@ -9,6 +8,7 @@ import Settings from '../pages/Settings'
 
 function AppLayout() {
   const [activePage, setActivePage] = useState('dashboard')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const renderPage = () => {
     switch (activePage) {
@@ -16,14 +16,21 @@ function AppLayout() {
         return <History />
 
       case 'search':
-        return <Search />
+        return <Search query={searchQuery}/>
 
       case 'settings':
         return <Settings />
 
       case 'dashboard':
       default:
-        return <Dashboard />
+        return (
+          <Dashboard
+            onViewAllSearch={(query) => {
+              setSearchQuery(query)
+              setActivePage('search')
+            }}
+          />
+        )
     }
   }
 
