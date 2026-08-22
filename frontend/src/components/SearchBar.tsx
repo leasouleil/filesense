@@ -31,11 +31,13 @@ const mockResults: SearchResult[] = [
 interface SearchBarProps {
   onViewAll: (query: string) => void
   initialQuery?: string
+  showDropdown?: boolean
 }
 
 function SearchBar({
   onViewAll,
   initialQuery = '',
+  showDropdown = true,
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
 
@@ -43,7 +45,8 @@ function SearchBar({
     file.fileName.toLowerCase().includes(query.toLowerCase())
   )
 
-  const showResults = query.trim().length > 0
+  const showResults =
+  showDropdown && query.trim().length > 0
 
   return (
     <div className="relative mt-6">

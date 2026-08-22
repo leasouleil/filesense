@@ -57,6 +57,7 @@ function Search({ query }: SearchProps) {
 
       <SearchBar
         initialQuery={searchQuery}
+        showDropdown={false}
         onViewAll={(newQuery) => {
           setSearchQuery(newQuery)
         }}
