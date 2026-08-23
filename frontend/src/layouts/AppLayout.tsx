@@ -29,6 +29,9 @@ function AppLayout() {
               setSearchQuery(query)
               setActivePage('search')
             }}
+            onViewAllHistory={() => {
+              setActivePage('history')
+            }}
           />
         )
     }

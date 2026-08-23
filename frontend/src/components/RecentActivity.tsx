@@ -30,12 +30,12 @@ function RecentActivity({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-fs-border bg-fs-surface">
+      <div className="overflow-hidden rounded-xl border border-fs-border bg-fs-surface divide-y divide-fs-border">
         {recentRecords.length > 0 ? (
           recentRecords.map((record) => (
             <div
               key={record.id}
-              className="flex items-center justify-between gap-4 border-b border-fs-border px-5 py-4 last:border-b-0"
+              className="flex items-center justify-between gap-6 px-6 py-5"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fs-background text-sm">

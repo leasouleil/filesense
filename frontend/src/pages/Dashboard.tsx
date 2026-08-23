@@ -5,9 +5,13 @@ import { mockHistory } from '../data/mockHistory'
 
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
+  onViewAllHistory: () => void
 }
 
-function Dashboard({ onViewAllSearch }: DashboardProps) {
+function Dashboard({ 
+  onViewAllSearch, 
+  onViewAllHistory
+}: DashboardProps) {
   return (
     <div className="mx-auto max-w-6xl">
       {/* Page Header */}
@@ -47,12 +51,12 @@ function Dashboard({ onViewAllSearch }: DashboardProps) {
       </section>
 
       {/* Recent Activity */}
-        <RecentActivity
+      <div className="mt-8">
+       <RecentActivity
           records={mockHistory}
-          onViewAll={() => {
-            // navigate to History
-          }}
+          onViewAll={onViewAllHistory}
         />
+        </div>
     </div>
   )
 }
