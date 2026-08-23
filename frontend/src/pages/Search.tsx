@@ -2,32 +2,39 @@ import { useState } from 'react'
 
 import SearchBar from '../components/SearchBar'
 import SearchResult from '../components/SearchResult'
+import type { SearchResult as SearchResultType } from '../types/search'
 
 interface SearchProps {
   query: string
 }
 
-const mockResults = [
+const mockResults: SearchResultType[] = [
   {
     id: 1,
-    fileName: 'invoice_august.pdf',
+    original_path: 'C:/Users/User/Downloads/invoice_august.pdf',
+    new_path: 'C:/Users/User/FileSense/Finance/invoice_august.pdf',
     category: 'Finance',
-    fileType: 'PDF',
-    path: 'Finance/invoice_august.pdf',
+    confidence: null,
+    timestamp: '2026-08-23 01:20:00',
+    undone: 0,
   },
   {
     id: 2,
-    fileName: 'invoice_july.pdf',
+    original_path: 'C:/Users/User/Downloads/invoice_july.pdf',
+    new_path: 'C:/Users/User/FileSense/Finance/invoice_july.pdf',
     category: 'Finance',
-    fileType: 'PDF',
-    path: 'Finance/invoice_july.pdf',
+    confidence: null,
+    timestamp: '2026-08-22 15:40:00',
+    undone: 0,
   },
   {
     id: 3,
-    fileName: 'ABC_invoice.pdf',
+    original_path: 'C:/Users/User/Downloads/ABC_invoice.pdf',
+    new_path: 'C:/Users/User/FileSense/Finance/ABC_invoice.pdf',
     category: 'Finance',
-    fileType: 'PDF',
-    path: 'Finance/ABC_invoice.pdf',
+    confidence: null,
+    timestamp: '2026-08-21 10:15:00',
+    undone: 0,
   },
 ]
 
@@ -35,13 +42,16 @@ function Search({ query }: SearchProps) {
   const [searchQuery, setSearchQuery] = useState(query)
 
   const filteredResults =
-    searchQuery.trim().length > 0
-      ? mockResults.filter((file) =>
-          file.fileName
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
+  searchQuery.trim().length > 0
+    ? mockResults.filter((file) => {
+        const normalizedQuery = searchQuery.toLowerCase()
+
+        return (
+          file.original_path.toLowerCase().includes(normalizedQuery) ||
+          file.new_path.toLowerCase().includes(normalizedQuery)
         )
-      : []
+      })
+    : []
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -87,10 +97,7 @@ function Search({ query }: SearchProps) {
             filteredResults.map((file) => (
               <SearchResult
                 key={file.id}
-                fileName={file.fileName}
-                category={file.category}
-                fileType={file.fileType}
-                path={file.path}
+                result={file}
               />
             ))
           ) : (
