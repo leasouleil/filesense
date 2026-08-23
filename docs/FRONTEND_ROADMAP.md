@@ -5,7 +5,7 @@
 - [/] Define color system
 - [/] Define typography
 - [/] Design dashboard
-- [ ] Design history
+- [/] Design history
 - [/] Design search
 - [ ] Design settings
 
@@ -14,7 +14,7 @@
 - [/] Configure Tailwind
 - [/] Build application shell
 - [/] Build dashboard
-- [ ] Build history
+- [/] Build history
 - [/] Build search
 - [ ] Build settings
 

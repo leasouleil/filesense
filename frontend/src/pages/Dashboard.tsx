@@ -3,6 +3,19 @@ import RecentActivity from '../components/RecentActivity'
 import SearchBar from '../components/SearchBar'
 import { mockHistory } from '../data/mockHistory'
 
+const totalOrganized = mockHistory.filter(
+  (record) => record.undone === 0,
+).length
+
+const today = new Date().toISOString().slice(0, 10)
+
+const organizedToday = mockHistory.filter(
+  (record) =>
+    record.undone === 0 &&
+    record.timestamp.startsWith(today),
+).length
+
+
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
   onViewAllHistory: () => void
@@ -33,13 +46,13 @@ function Dashboard({
       <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard
           label="Total Organized"
-          value={1284}
+          value={totalOrganized}
           description="Files organized"
         />
 
         <StatCard
           label="Organized Today"
-          value={18}
+          value={organizedToday}
           description="Files organized today"
         />
 
