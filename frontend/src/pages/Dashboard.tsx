@@ -1,7 +1,7 @@
 import StatCard from '../components/StatCard'
 import RecentActivity from '../components/RecentActivity'
 import SearchBar from '../components/SearchBar'
-
+import { mockHistory } from '../data/mockHistory'
 
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
@@ -47,7 +47,12 @@ function Dashboard({ onViewAllSearch }: DashboardProps) {
       </section>
 
       {/* Recent Activity */}
-      <RecentActivity />
+        <RecentActivity
+          records={mockHistory}
+          onViewAll={() => {
+            // navigate to History
+          }}
+        />
     </div>
   )
 }
