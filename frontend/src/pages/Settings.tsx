@@ -31,6 +31,11 @@ function Settings() {
   const [settings, setSettings] =
     useState<SettingsForm>(initialSettings)
 
+  const [newCategory, setNewCategory] = useState('')
+  const [showAddCategory, setShowAddCategory] = useState(false)
+  const [categoryError, setCategoryError] = useState('')
+  const [saveMessage, setSaveMessage] = useState('')
+
   const updateSetting = <K extends keyof SettingsForm>(
     key: K,
     value: SettingsForm[K],
@@ -41,12 +46,64 @@ function Settings() {
     }))
   }
 
-  const handleSave = () => {
-    console.log('Settings to save:', settings)
+  const handleAddCategory = () => {
+    const categoryName = newCategory.trim()
+
+    if (!categoryName) {
+      setCategoryError('Please enter a category name.')
+      return
+    }
+
+    const categoryExists = Object.keys(settings.categories).some(
+      (category) =>
+        category.toLowerCase() === categoryName.toLowerCase(),
+    )
+
+    if (categoryExists) {
+      setCategoryError(
+        'Category already exists. Select a different name.',
+      )
+      return
+    }
+
+    setSettings((current) => ({
+      ...current,
+      categories: {
+        ...current.categories,
+        [categoryName]: categoryName,
+      },
+    }))
+
+    setNewCategory('')
+    setCategoryError('')
+    setShowAddCategory(false)
   }
 
+  const handleRemoveCategory = (category: string) => {
+    setSettings((current) => {
+      const updatedCategories = { ...current.categories }
+
+      delete updatedCategories[category]
+
+      return {
+        ...current,
+        categories: updatedCategories,
+      }
+    })
+  }
+
+  const handleSave = () => {
+  console.log('Settings to save:', settings)
+
+  setSaveMessage('Settings saved successfully.')
+
+  setTimeout(() => {
+    setSaveMessage('')
+  }, 3000)
+}
+
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl pb-10">
       {/* Header */}
       <header>
         <h1 className="text-2xl font-semibold text-fs-text-primary">
@@ -54,7 +111,7 @@ function Settings() {
         </h1>
 
         <p className="mt-1 text-sm text-fs-text-secondary">
-          Configure how FileSense organizes your files.
+          Configure FileSense.
         </p>
       </header>
 
@@ -64,14 +121,15 @@ function Settings() {
           General
         </h2>
 
-        <div className="mt-4 rounded-xl border border-fs-border bg-fs-surface">
+        <div className="mt-4 overflow-hidden rounded-xl border border-fs-border bg-fs-surface">
+          {/* Watch Folder */}
           <div className="p-5">
             <label className="text-sm font-medium text-fs-text-primary">
               Watched Folder
             </label>
 
-            <p className="mt-1 text-xs text-fs-text-secondary">
-              Folder that FileSense monitors for new files.
+            <p className="mt-1 text-xs text-fs-text-muted">
+              Folder monitored for new files.
             </p>
 
             <div className="mt-3 flex gap-2">
@@ -89,20 +147,21 @@ function Settings() {
 
               <button
                 type="button"
-                className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary hover:bg-fs-background"
+                className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary transition hover:bg-fs-background hover:text-fs-text-primary"
               >
                 Browse
               </button>
             </div>
           </div>
 
+          {/* Sorted Folder */}
           <div className="border-t border-fs-border p-5">
             <label className="text-sm font-medium text-fs-text-primary">
               Sorted Folder
             </label>
 
-            <p className="mt-1 text-xs text-fs-text-secondary">
-              Folder where organized files will be placed.
+            <p className="mt-1 text-xs text-fs-text-muted">
+              Destination for organized files.
             </p>
 
             <div className="mt-3 flex gap-2">
@@ -120,7 +179,7 @@ function Settings() {
 
               <button
                 type="button"
-                className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary hover:bg-fs-background"
+                className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary transition hover:bg-fs-background hover:text-fs-text-primary"
               >
                 Browse
               </button>
@@ -129,23 +188,25 @@ function Settings() {
         </div>
       </section>
 
-      {/* AI */}
+      {/* AI Classification */}
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-fs-text-primary">
           AI Classification
         </h2>
 
-        <div className="mt-4 rounded-xl border border-fs-border bg-fs-surface">
+        <div className="mt-4 overflow-hidden rounded-xl border border-fs-border bg-fs-surface">
+          {/* Backend */}
           <div className="p-5">
             <label className="text-sm font-medium text-fs-text-primary">
               AI Backend
             </label>
 
-            <p className="mt-1 text-xs text-fs-text-secondary">
-              Choose how FileSense classifies files.
+            <p className="mt-1 text-xs text-fs-text-muted">
+              Choose how files are classified.
             </p>
 
             <div className="mt-4 space-y-3">
+              {/* Local */}
               <label className="flex cursor-pointer items-start gap-3">
                 <input
                   type="radio"
@@ -163,12 +224,13 @@ function Settings() {
                     Local AI
                   </p>
 
-                  <p className="text-xs text-fs-text-secondary">
-                    Uses the local Ollama model configured for FileSense.
+                  <p className="text-xs text-fs-text-muted">
+                    Uses Ollama locally.
                   </p>
                 </div>
               </label>
 
+              {/* Cloud */}
               <label className="flex cursor-pointer items-start gap-3">
                 <input
                   type="radio"
@@ -186,22 +248,23 @@ function Settings() {
                     Cloud AI
                   </p>
 
-                  <p className="text-xs text-fs-text-secondary">
-                    Uses a configured cloud AI provider.
+                  <p className="text-xs text-fs-text-muted">
+                    Uses a cloud provider.
                   </p>
                 </div>
               </label>
             </div>
           </div>
 
+          {/* Local Model */}
           {settings.ai_backend === 'local' && (
             <div className="border-t border-fs-border p-5">
               <label className="text-sm font-medium text-fs-text-primary">
                 Local Model
               </label>
 
-              <p className="mt-1 text-xs text-fs-text-secondary">
-                Ollama model used for file classification.
+              <p className="mt-1 text-xs text-fs-text-muted">
+                Ollama model used for classification.
               </p>
 
               <input
@@ -218,14 +281,15 @@ function Settings() {
             </div>
           )}
 
+          {/* Cloud Provider */}
           {settings.ai_backend === 'cloud' && (
             <div className="border-t border-fs-border p-5">
               <label className="text-sm font-medium text-fs-text-primary">
                 Cloud Provider
               </label>
 
-              <p className="mt-1 text-xs text-fs-text-secondary">
-                Provider used for AI classification.
+              <p className="mt-1 text-xs text-fs-text-muted">
+                Provider used for classification.
               </p>
 
               <input
@@ -247,22 +311,38 @@ function Settings() {
 
       {/* Categories */}
       <section className="mt-10">
-        <h2 className="text-sm font-semibold text-fs-text-primary">
-          Categories
-        </h2>
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-fs-text-primary">
+              Categories
+            </h2>
 
-        <p className="mt-1 text-xs text-fs-text-secondary">
-          Folders used when organizing files.
-        </p>
+            <p className="mt-1 text-xs text-fs-text-muted">
+              Folders used for organization.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddCategory(true)
+              setCategoryError('')
+            }}
+            className="text-xs font-medium text-fs-accent hover:opacity-80"
+          >
+            + Add Category
+          </button>
+        </div>
 
         <div className="mt-4 overflow-hidden rounded-xl border border-fs-border bg-fs-surface">
+          {/* Existing Categories */}
           {Object.entries(settings.categories).map(
             ([key, value]) => (
               <div
                 key={key}
                 className="flex items-center gap-4 border-b border-fs-border px-5 py-4 last:border-b-0"
               >
-                <div className="w-40 text-sm text-fs-text-primary">
+                <div className="w-40 shrink-0 text-sm text-fs-text-primary">
                   {key}
                 </div>
 
@@ -280,14 +360,97 @@ function Settings() {
                   }
                   className="min-w-0 flex-1 rounded-lg border border-fs-border bg-fs-background px-3 py-2 text-sm text-fs-text-primary outline-none focus:border-fs-accent"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCategory(key)}
+                  className="shrink-0 rounded-md px-2 py-1 text-xs text-fs-text-muted transition hover:bg-fs-background hover:text-red-400"
+                  aria-label={`Remove ${key} category`}
+                >
+                  Remove
+                </button>
               </div>
             ),
+          )}
+
+          {Object.keys(settings.categories).length === 0 && (
+            <div className="px-5 py-8 text-center">
+              <p className="text-sm text-fs-text-muted">
+                No categories added.
+              </p>
+            </div>
+          )}
+
+          {/* Add Category Form */}
+          {showAddCategory && (
+            <div className="border-t border-fs-border bg-fs-background/40 p-5">
+              <label className="text-sm font-medium text-fs-text-primary">
+                New Category
+              </label>
+
+              <div className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  value={newCategory}
+                  onChange={(event) => {
+                    setNewCategory(event.target.value)
+                    setCategoryError('')
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      handleAddCategory()
+                    }
+                  }}
+                  autoFocus
+                  placeholder="e.g. Work"
+                  className={`min-w-0 flex-1 rounded-lg border bg-fs-surface px-3 py-2 text-sm text-fs-text-primary outline-none ${
+                    categoryError
+                      ? 'border-red-400 focus:border-red-400'
+                      : 'border-fs-border focus:border-fs-accent'
+                  }`}
+                />
+
+                <button
+                  type="button"
+                  onClick={handleAddCategory}
+                  className="rounded-lg bg-fs-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                >
+                  Add
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewCategory('')
+                    setCategoryError('')
+                    setShowAddCategory(false)
+                  }}
+                  className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              {/* Duplicate / Validation Warning */}
+              {categoryError && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
+                  <span aria-hidden="true">⚠</span>
+                  {categoryError}
+                </p>
+              )}
+            </div>
           )}
         </div>
       </section>
 
       {/* Save */}
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end gap-4">
+          {saveMessage && (
+            <p className="text-xs text-fs-text-secondary">
+              {saveMessage}
+              </p>
+          )}
+
         <button
           type="button"
           onClick={handleSave}
