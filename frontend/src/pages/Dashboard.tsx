@@ -26,7 +26,7 @@ function Dashboard({
   onViewAllHistory
 }: DashboardProps) {
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-6xl pb-10">
       {/* Page Header */}
       <header>
         <h1 className="text-2xl font-semibold text-fs-text-primary">
@@ -62,7 +62,7 @@ function Dashboard({
       />
 
       {/* Statistics */}
-      <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
         <StatCard
           label="Total Organized"
           value={totalOrganized}
@@ -83,7 +83,7 @@ function Dashboard({
       </section>
 
       {/* Recent Activity */}
-      <div className="mt-8">
+      <div className="mt-10">
        <RecentActivity
           records={mockHistory}
           onViewAll={onViewAllHistory}

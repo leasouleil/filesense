@@ -1,7 +1,7 @@
 interface StatCardProps {
   label: string
-  value: string | number
-  description?: string
+  value: number
+  description: string
 }
 
 function StatCard({
@@ -10,20 +10,18 @@ function StatCard({
   description,
 }: StatCardProps) {
   return (
-    <div className="rounded-xl border border-fs-border bg-fs-surface p-5">
-      <p className="text-sm text-fs-text-secondary">
+    <div className="rounded-xl border border-fs-border bg-fs-surface p-5 transition hover:border-fs-accent/30">
+      <p className="text-sm font-medium text-fs-text-secondary">
         {label}
       </p>
 
-      <p className="mt-2 text-2xl font-semibold text-fs-text-primary">
-        {value}
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-fs-text-primary">
+        {value.toLocaleString()}
       </p>
 
-      {description && (
-        <p className="mt-1 text-xs text-fs-text-muted">
-          {description}
-        </p>
-      )}
+      <p className="mt-1 text-xs text-fs-text-muted">
+        {description}
+      </p>
     </div>
   )
 }
