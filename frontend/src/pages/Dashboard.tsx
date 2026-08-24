@@ -34,9 +34,28 @@ function Dashboard({
         </h1>
 
         <p className="mt-1 text-sm text-fs-text-secondary">
-          Overview of your file organization.
+          Filesense is actively organizing your files.
         </p>
       </header>
+        <div className="mt-6 flex items-center justify-between rounded-xl border border-fs-border bg-fs-surface px-5 py-4">
+      <div>
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+
+          <p className="text-sm font-medium text-fs-text-primary">
+            Monitoring Downloads
+          </p>
+        </div>
+
+        <p className="mt-1 text-xs text-fs-text-secondary">
+          FileSense is watching your Downloads folder for new files.
+        </p>
+      </div>
+
+      <span className="text-xs font-medium text-emerald-400">
+        Active
+      </span>
+    </div>
 
       <SearchBar
         onViewAll={onViewAllSearch}

@@ -61,13 +61,14 @@ function Search({ query }: SearchProps) {
         </h1>
 
         <p className="mt-1 text-sm text-fs-text-secondary">
-          Find files organized by FileSense.
+          Search files organized by FileSense.
         </p>
       </header>
 
       <SearchBar
         initialQuery={searchQuery}
         showDropdown={false}
+        onQueryChange={setSearchQuery}
         onViewAll={(newQuery) => {
           setSearchQuery(newQuery)
         }}

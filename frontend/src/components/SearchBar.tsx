@@ -32,13 +32,16 @@ interface SearchBarProps {
   onViewAll: (query: string) => void
   initialQuery?: string
   showDropdown?: boolean
+  onQueryChange?: (query: string) => void
 }
 
 function SearchBar({
   onViewAll,
   initialQuery = '',
   showDropdown = true,
+  onQueryChange,
 }: SearchBarProps) {
+
   const [query, setQuery] = useState(initialQuery)
 
   const filteredResults = mockResults.filter((file) =>
@@ -59,13 +62,18 @@ function SearchBar({
         <input
             type="text"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              const value = event.target.value
+
+              setQuery(value)
+              onQueryChange?.(value)
+            }}
             onKeyDown={(event) => {
                 if (event.key === 'Enter' && query.trim()) {
                 onViewAll(query.trim())
                 }
             }}
-            placeholder="Search your files..."
+            placeholder="Search your files by name or path..."
             className="w-full bg-transparent text-sm text-fs-text-primary outline-none placeholder:text-fs-text-muted"
             />
       </div>
@@ -91,7 +99,7 @@ function SearchBar({
               ))}
 
               <button
-                onClick={() => onViewAll(query)}
+                onClick={() => onViewAll(query.trim())}
                 className="w-full px-4 py-3 text-center text-sm text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary"
               >
                 View all results →

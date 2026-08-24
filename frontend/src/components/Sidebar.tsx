@@ -3,54 +3,65 @@ interface SidebarProps {
   onNavigate: (page: string) => void
 }
 
-function Sidebar({ activePage, onNavigate }: SidebarProps) {
-  const navigation = [
-    {
-      name: 'Dashboard',
-      id: 'dashboard',
-    },
-    {
-      name: 'History',
-      id: 'history',
-    },
-    {
-      name: 'Settings',
-      id: 'settings',
-    },
-  ]
-
+function Sidebar({
+  activePage,
+  onNavigate,
+}: SidebarProps) {
   return (
-    <aside className="fixed left-0 top-0 h-screen w-52 border-r border-fs-border bg-fs-sidebar p-5">
-      {/* Branding */}
+    <aside className="fixed left-0 top-0 h-screen w-52 border-r border-fs-border bg-fs-surface p-5">
+      {/* Brand */}
       <div className="mb-10">
-        <h1 className="text-lg font-semibold text-fs-text-primary">
+        <h1 className="text-xl font-bold text-fs-accent">
           FileSense
         </h1>
 
-        <p className="mt-1 text-xs text-fs-text-muted">
+        <p className="mt-1 text-xs text-fs-text-secondary">
           Smart file organization
         </p>
       </div>
 
-      {/* Navigation */}
-      <nav className="space-y-1">
-        {navigation.map((item) => {
-          const isActive = activePage === item.id
+      {/* Main navigation */}
+      <nav className="space-y-2">
+        <button
+          type="button"
+          onClick={() => onNavigate('dashboard')}
+          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+            activePage === 'dashboard'
+              ? 'bg-fs-accent/10 text-fs-accent'
+              : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
+          }`}
+        >
+          Dashboard
+        </button>
 
-          return (
-            <button
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`w-full rounded-md px-3 py-2 text-left text-sm transition ${
-                isActive
-                  ? 'bg-fs-surface text-fs-text-primary'
-                  : 'text-fs-text-secondary hover:bg-fs-surface hover:text-fs-text-primary'
-              }`}
-            >
-              {item.name}
-            </button>
-          )
-        })}
+        <button
+          type="button"
+          onClick={() => onNavigate('history')}
+          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+            activePage === 'history'
+              ? 'bg-fs-accent/10 text-fs-accent'
+              : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
+          }`}
+        >
+          History
+        </button>
+      </nav>
+
+      {/* Secondary navigation */}
+      <div className="my-6 border-t border-fs-border" />
+
+      <nav>
+        <button
+          type="button"
+          onClick={() => onNavigate('settings')}
+          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+            activePage === 'settings'
+              ? 'bg-fs-accent/10 text-fs-accent'
+              : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
+          }`}
+        >
+          Settings
+        </button>
       </nav>
     </aside>
   )
