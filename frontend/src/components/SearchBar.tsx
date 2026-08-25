@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import type { HistoryRecord } from '../types/history'
 
-import { mockHistory } from '../data/mockHistory'
 import {
   getFileName,
   getFileExtension,
@@ -11,6 +11,7 @@ interface SearchBarProps {
   initialQuery?: string
   showDropdown?: boolean
   onQueryChange?: (query: string) => void
+  results?: HistoryRecord[]
 }
 
 function SearchBar({
@@ -18,18 +19,9 @@ function SearchBar({
   initialQuery = '',
   showDropdown = true,
   onQueryChange,
+  results = [],
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
-
-  const filteredResults = mockHistory.filter((file) => {
-    const normalizedQuery = query.toLowerCase()
-
-    return (
-      file.original_path.toLowerCase().includes(normalizedQuery) ||
-      file.new_path.toLowerCase().includes(normalizedQuery) ||
-      file.category?.toLowerCase().includes(normalizedQuery)
-    )
-  })
 
   const showResults =
     showDropdown && query.trim().length > 0
@@ -64,9 +56,9 @@ function SearchBar({
       {/* Results dropdown */}
       {showResults && (
         <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-xl border border-fs-border bg-fs-surface shadow-lg">
-          {filteredResults.length > 0 ? (
+          {results.length > 0 ? (
             <>
-              {filteredResults.map((file) => {
+              {results.map((file) => {
                 const fileName = getFileName(file.new_path)
                 const fileType = getFileExtension(file.new_path)
 

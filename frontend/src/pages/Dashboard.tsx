@@ -1,10 +1,12 @@
 import StatCard from '../components/StatCard'
 import RecentActivity from '../components/RecentActivity'
 import SearchBar from '../components/SearchBar'
-import { useEffect, useState } from 'react'
 
+import { useEffect, useState } from 'react'
 import type { HistoryRecord } from '../types/history'
+
 import { getHistory } from '../services/historyService'
+import { searchFiles } from '../services/searchService'
 
 
 
@@ -19,6 +21,8 @@ function Dashboard({
 }: DashboardProps) {
 
   const [records, setRecords] = useState<HistoryRecord[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<HistoryRecord[]>([])
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -41,6 +45,22 @@ function Dashboard({
       record.undone === 0 &&
       record.timestamp.startsWith(today),
   ).length
+
+  useEffect(() => {
+  const runSearch = async () => {
+    const normalizedQuery = searchQuery.trim()
+
+    if (!normalizedQuery) {
+      setSearchResults([])
+      return
+    }
+
+    const results = await searchFiles(normalizedQuery)
+    setSearchResults(results)
+  }
+
+  runSearch()
+}, [searchQuery])
 
 
   return (
@@ -77,6 +97,8 @@ function Dashboard({
 
       <SearchBar
         onViewAll={onViewAllSearch}
+        onQueryChange={setSearchQuery}
+        results={searchResults}
       />
 
       {/* Statistics */}
