@@ -56,7 +56,7 @@ function Dashboard({
     }
 
     const results = await searchFiles(normalizedQuery)
-    setSearchResults(results)
+    setSearchResults(results.slice(0, 5))
   }
 
   runSearch()
