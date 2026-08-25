@@ -1,32 +1,10 @@
 import { useState } from 'react'
 
-interface SearchResult {
-  id: number
-  fileName: string
-  category: string
-  type: string
-}
-
-const mockResults: SearchResult[] = [
-  {
-    id: 1,
-    fileName: 'invoice_august.pdf',
-    category: 'Finance',
-    type: 'PDF',
-  },
-  {
-    id: 2,
-    fileName: 'invoice_july.pdf',
-    category: 'Finance',
-    type: 'PDF',
-  },
-  {
-    id: 3,
-    fileName: 'ABC_invoice.pdf',
-    category: 'Finance',
-    type: 'PDF',
-  },
-]
+import { mockHistory } from '../data/mockHistory'
+import {
+  getFileName,
+  getFileExtension,
+} from '../utils/fileUtils'
 
 interface SearchBarProps {
   onViewAll: (query: string) => void
@@ -41,15 +19,20 @@ function SearchBar({
   showDropdown = true,
   onQueryChange,
 }: SearchBarProps) {
-
   const [query, setQuery] = useState(initialQuery)
 
-  const filteredResults = mockResults.filter((file) =>
-    file.fileName.toLowerCase().includes(query.toLowerCase())
-  )
+  const filteredResults = mockHistory.filter((file) => {
+    const normalizedQuery = query.toLowerCase()
+
+    return (
+      file.original_path.toLowerCase().includes(normalizedQuery) ||
+      file.new_path.toLowerCase().includes(normalizedQuery) ||
+      file.category?.toLowerCase().includes(normalizedQuery)
+    )
+  })
 
   const showResults =
-  showDropdown && query.trim().length > 0
+    showDropdown && query.trim().length > 0
 
   return (
     <div className="relative mt-6">
@@ -60,22 +43,22 @@ function SearchBar({
         </span>
 
         <input
-            type="text"
-            value={query}
-            onChange={(event) => {
-              const value = event.target.value
+          type="text"
+          value={query}
+          onChange={(event) => {
+            const value = event.target.value
 
-              setQuery(value)
-              onQueryChange?.(value)
-            }}
-            onKeyDown={(event) => {
-                if (event.key === 'Enter' && query.trim()) {
-                onViewAll(query.trim())
-                }
-            }}
-            placeholder="Search your files by name or path..."
-            className="w-full bg-transparent text-sm text-fs-text-primary outline-none placeholder:text-fs-text-muted"
-            />
+            setQuery(value)
+            onQueryChange?.(value)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && query.trim()) {
+              onViewAll(query.trim())
+            }
+          }}
+          placeholder="Search your files by name or path..."
+          className="w-full bg-transparent text-sm text-fs-text-primary outline-none placeholder:text-fs-text-muted"
+        />
       </div>
 
       {/* Results dropdown */}
@@ -83,22 +66,34 @@ function SearchBar({
         <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-xl border border-fs-border bg-fs-surface shadow-lg">
           {filteredResults.length > 0 ? (
             <>
-              {filteredResults.map((file) => (
-                <button
-                  key={file.id}
-                  className="w-full border-b border-fs-border px-4 py-3 text-left last:border-b-0 hover:bg-fs-background"
-                >
-                  <p className="text-sm font-medium text-fs-text-primary">
-                    {file.fileName}
-                  </p>
+              {filteredResults.map((file) => {
+                const fileName = getFileName(file.new_path)
+                const fileType = getFileExtension(file.new_path)
 
-                  <p className="mt-1 text-xs text-fs-text-secondary">
-                    {file.category} · {file.type}
-                  </p>
-                </button>
-              ))}
+                return (
+                  <button
+                    key={file.id}
+                    type="button"
+                    className="w-full border-b border-fs-border px-4 py-3 text-left last:border-b-0 hover:bg-fs-background"
+                  >
+                    <p className="truncate text-sm font-medium text-fs-text-primary">
+                      {fileName}
+                    </p>
+
+                    <p className="mt-1 text-xs text-fs-text-secondary">
+                      {file.category ?? 'Uncategorized'}
+                      {fileType && ` · ${fileType}`}
+                    </p>
+
+                    <p className="mt-1 truncate text-xs text-fs-text-muted">
+                      {file.new_path}
+                    </p>
+                  </button>
+                )
+              })}
 
               <button
+                type="button"
                 onClick={() => onViewAll(query.trim())}
                 className="w-full px-4 py-3 text-center text-sm text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary"
               >

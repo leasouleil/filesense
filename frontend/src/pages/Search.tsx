@@ -1,57 +1,42 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import SearchBar from '../components/SearchBar'
 import SearchResult from '../components/SearchResult'
 import type { SearchResult as SearchResultType } from '../types/search'
+import { searchFiles } from '../services/searchService'
 
 interface SearchProps {
   query: string
 }
 
-const mockResults: SearchResultType[] = [
-  {
-    id: 1,
-    original_path: 'C:/Users/User/Downloads/invoice_august.pdf',
-    new_path: 'C:/Users/User/FileSense/Finance/invoice_august.pdf',
-    category: 'Finance',
-    confidence: null,
-    timestamp: '2026-08-23 01:20:00',
-    undone: 0,
-  },
-  {
-    id: 2,
-    original_path: 'C:/Users/User/Downloads/invoice_july.pdf',
-    new_path: 'C:/Users/User/FileSense/Finance/invoice_july.pdf',
-    category: 'Finance',
-    confidence: null,
-    timestamp: '2026-08-22 15:40:00',
-    undone: 0,
-  },
-  {
-    id: 3,
-    original_path: 'C:/Users/User/Downloads/ABC_invoice.pdf',
-    new_path: 'C:/Users/User/FileSense/Finance/ABC_invoice.pdf',
-    category: 'Finance',
-    confidence: null,
-    timestamp: '2026-08-21 10:15:00',
-    undone: 0,
-  },
-]
-
 function Search({ query }: SearchProps) {
   const [searchQuery, setSearchQuery] = useState(query)
+  const [results, setResults] = useState<SearchResultType[]>([])
+  const [loading, setLoading] = useState(false)
 
-  const filteredResults =
-  searchQuery.trim().length > 0
-    ? mockResults.filter((file) => {
-        const normalizedQuery = searchQuery.toLowerCase()
+  useEffect(() => {
+    setSearchQuery(query)
+  }, [query])
 
-        return (
-          file.original_path.toLowerCase().includes(normalizedQuery) ||
-          file.new_path.toLowerCase().includes(normalizedQuery)
-        )
-      })
-    : []
+  useEffect(() => {
+    const runSearch = async () => {
+      const normalizedQuery = searchQuery.trim()
+
+      if (!normalizedQuery) {
+        setResults([])
+        return
+      }
+
+      setLoading(true)
+
+      const searchResults = await searchFiles(normalizedQuery)
+
+      setResults(searchResults)
+      setLoading(false)
+    }
+
+    runSearch()
+  }, [searchQuery])
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -61,14 +46,16 @@ function Search({ query }: SearchProps) {
         </h1>
 
         <p className="mt-1 text-sm text-fs-text-secondary">
-          Search files organized by FileSense.
+          Find files organized by FileSense.
         </p>
       </header>
 
       <SearchBar
         initialQuery={searchQuery}
         showDropdown={false}
-        onQueryChange={setSearchQuery}
+        onQueryChange={(newQuery) =>{
+          setSearchQuery(newQuery)
+        }}
         onViewAll={(newQuery) => {
           setSearchQuery(newQuery)
         }}
@@ -77,9 +64,11 @@ function Search({ query }: SearchProps) {
       <div className="mt-8">
         {searchQuery.trim().length > 0 ? (
           <p className="text-sm text-fs-text-secondary">
-            {filteredResults.length}{' '}
-            {filteredResults.length === 1 ? 'result' : 'results'}
-            {' '}for "{searchQuery}"
+            {loading
+              ? 'Searching...'
+              : `${results.length} ${
+                  results.length === 1 ? 'result' : 'results'
+                } for "${searchQuery}"`}
           </p>
         ) : (
           <p className="text-sm text-fs-text-secondary">
@@ -94,8 +83,14 @@ function Search({ query }: SearchProps) {
                 Search for a file to see results.
               </p>
             </div>
-          ) : filteredResults.length > 0 ? (
-            filteredResults.map((file) => (
+          ) : loading ? (
+            <div className="px-5 py-10 text-center">
+              <p className="text-sm text-fs-text-secondary">
+                Searching...
+              </p>
+            </div>
+          ) : results.length > 0 ? (
+            results.map((file) => (
               <SearchResult
                 key={file.id}
                 result={file}
