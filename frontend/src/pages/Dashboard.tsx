@@ -1,19 +1,11 @@
 import StatCard from '../components/StatCard'
 import RecentActivity from '../components/RecentActivity'
 import SearchBar from '../components/SearchBar'
-import { mockHistory } from '../data/mockHistory'
+import { useEffect, useState } from 'react'
 
-const totalOrganized = mockHistory.filter(
-  (record) => record.undone === 0,
-).length
+import type { HistoryRecord } from '../types/history'
+import { getHistory } from '../services/historyService'
 
-const today = new Date().toISOString().slice(0, 10)
-
-const organizedToday = mockHistory.filter(
-  (record) =>
-    record.undone === 0 &&
-    record.timestamp.startsWith(today),
-).length
 
 
 interface DashboardProps {
@@ -25,6 +17,32 @@ function Dashboard({
   onViewAllSearch, 
   onViewAllHistory
 }: DashboardProps) {
+
+  const [records, setRecords] = useState<HistoryRecord[]>([])
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      const history = await getHistory()
+
+      setRecords(history)
+    }
+
+    loadDashboardData()
+  }, [])
+
+    const totalOrganized = records.filter(
+    (record) => record.undone === 0,
+  ).length
+
+  const today = new Date().toISOString().slice(0, 10)
+
+  const organizedToday = records.filter(
+    (record) =>
+      record.undone === 0 &&
+      record.timestamp.startsWith(today),
+  ).length
+
+
   return (
     <div className="mx-auto max-w-6xl pb-10">
       {/* Page Header */}
@@ -77,17 +95,17 @@ function Dashboard({
 
         <StatCard
           label="Needs Review"
-          value={3}
+          value={0}
           description="Files waiting for review"
         />
       </section>
 
       {/* Recent Activity */}
       <div className="mt-10">
-       <RecentActivity
-          records={mockHistory}
-          onViewAll={onViewAllHistory}
-        />
+      <RecentActivity
+        records={records}
+        onViewAll={onViewAllHistory}
+      />
         </div>
     </div>
   )
