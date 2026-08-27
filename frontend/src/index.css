@@ -53,3 +53,15 @@ body {
   background: var(--fs-background);
   color: var(--fs-text-primary);
 }
+
+@keyframes activeBorder {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

@@ -22,28 +22,42 @@ function Sidebar({
 
       {/* Main navigation */}
       <nav className="space-y-2">
+        {/* Dashboard */}
         <button
           type="button"
           onClick={() => onNavigate('dashboard')}
-          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+          className={`relative w-full overflow-hidden rounded-lg px-4 py-3 text-left text-sm transition ${
             activePage === 'dashboard'
               ? 'bg-fs-accent/10 text-fs-accent'
               : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
           }`}
         >
-          Dashboard
+          {activePage === 'dashboard' && (
+            <span className="absolute left-0 top-0 h-full w-0.5 origin-top bg-fs-accent animate-[activeBorder_0.4s_ease-out]" />
+          )}
+
+          <span className="relative z-10">
+            Dashboard
+          </span>
         </button>
 
+        {/* History */}
         <button
           type="button"
           onClick={() => onNavigate('history')}
-          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+          className={`relative w-full overflow-hidden rounded-lg px-4 py-3 text-left text-sm transition ${
             activePage === 'history'
               ? 'bg-fs-accent/10 text-fs-accent'
               : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
           }`}
         >
-          History
+          {activePage === 'history' && (
+            <span className="absolute left-0 top-0 h-full w-0.5 origin-top bg-fs-accent animate-[activeBorder_0.4s_ease-out]" />
+          )}
+
+          <span className="relative z-10">
+            History
+          </span>
         </button>
       </nav>
 
@@ -51,16 +65,23 @@ function Sidebar({
       <div className="my-6 border-t border-fs-border" />
 
       <nav>
+        {/* Settings */}
         <button
           type="button"
           onClick={() => onNavigate('settings')}
-          className={`w-full rounded-lg px-4 py-3 text-left text-sm transition ${
+          className={`relative w-full overflow-hidden rounded-lg px-4 py-3 text-left text-sm transition ${
             activePage === 'settings'
               ? 'bg-fs-accent/10 text-fs-accent'
               : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary'
           }`}
         >
-          Settings
+          {activePage === 'settings' && (
+            <span className="absolute left-0 top-0 h-full w-0.5 origin-top bg-fs-accent animate-[activeBorder_0.4s_ease-out]" />
+          )}
+
+          <span className="relative z-10">
+            Settings
+          </span>
         </button>
       </nav>
     </aside>
