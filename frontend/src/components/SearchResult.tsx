@@ -5,6 +5,8 @@ import {
   getDisplayPath,
 } from '../utils/fileUtils'
 
+import FileTypeIcon from './FileTypeIcon'
+
 interface SearchResultProps {
   result: SearchResultType
 }
@@ -20,8 +22,8 @@ function SearchResult({ result }: SearchResultProps) {
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-fs-background text-sm text-fs-text-secondary">
-            📄
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-fs-background text-fs-text-secondary">
+            <FileTypeIcon extension={fileType} />
           </div>
 
           <div className="min-w-0">

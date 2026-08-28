@@ -6,6 +6,12 @@ import {
   getFileExtension,
 } from '../utils/fileUtils'
 
+import {
+  Search,
+} from 'lucide-react'
+
+import FileTypeIcon from './FileTypeIcon'
+
 interface SearchBarProps {
   onViewAll: (query: string) => void
   initialQuery?: string
@@ -30,9 +36,10 @@ function SearchBar({
     <div className="relative mt-6">
       {/* Search input */}
       <div className="flex items-center rounded-xl border border-fs-border bg-fs-surface px-4 py-3">
-        <span className="mr-3 text-fs-text-muted">
-          🔍
-        </span>
+        <Search
+          size={18}
+          className="mr-3 shrink-0 text-fs-text-muted"
+        />
 
         <input
           type="text"
@@ -68,9 +75,22 @@ function SearchBar({
                     type="button"
                     className="w-full border-b border-fs-border px-4 py-3 text-left last:border-b-0 hover:bg-fs-background"
                   >
-                    <p className="truncate text-sm font-medium text-fs-text-primary">
-                      {fileName}
-                    </p>
+                    <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fs-background text-fs-text-secondary">
+                      <FileTypeIcon extension={fileType} />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-fs-text-primary">
+                        {fileName}
+                      </p>
+
+                      <p className="mt-1 text-xs text-fs-text-secondary">
+                        {file.category ?? 'Uncategorized'}
+                        {fileType && ` · ${fileType}`}
+                      </p>
+                    </div>
+                  </div>
 
                     <p className="mt-1 text-xs text-fs-text-secondary">
                       {file.category ?? 'Uncategorized'}

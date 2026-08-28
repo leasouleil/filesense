@@ -1,4 +1,5 @@
 import type { HistoryRecord } from '../types/history'
+import { Undo2 } from 'lucide-react'
 
 import {
   getFileExtension,
@@ -127,10 +128,18 @@ function HistoryItem({
           <button
             type="button"
             onClick={() => onUndo(record.id)}
-            className="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-fs-text-secondary transition hover:bg-fs-background hover:text-fs-text-primary"
+            disabled={record.undone === 1}
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
+              record.undone === 1
+                ? 'cursor-not-allowed text-fs-text-muted'
+                : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-accent'
+            }`}
           >
-            <span>↩</span>
-            <span>Undo</span>
+            <Undo2 size={16} strokeWidth={1.8} />
+
+            <span>
+              {record.undone === 1 ? 'Undone' : 'Undo'}
+            </span>
           </button>
         )}
       </div>
