@@ -1,5 +1,6 @@
 import type { HistoryRecord } from '../types/history'
-import { Undo2 } from 'lucide-react'
+import { Undo2, RotateCcw } from 'lucide-react'
+import { getFileIcon } from '../utils/fileIcon'
 
 import {
   getFileExtension,
@@ -19,6 +20,7 @@ function HistoryItem({
 }: HistoryItemProps) {
   const fileName = getFileName(record.new_path)
   const fileType = getFileExtension(record.new_path)
+  const FileIcon = getFileIcon(fileType)
 
   const isUndone = record.undone === 1
 
@@ -41,6 +43,12 @@ function HistoryItem({
       {/* Summary row */}
       <div className="flex items-center justify-between gap-6">
         <div className="flex min-w-0 items-center gap-2">
+          <FileIcon
+            size={17}
+            strokeWidth={1.8}
+            className="shrink-0 text-fs-text-secondary"
+          />
+
           <p
             className={`min-w-0 truncate text-sm font-medium ${
               isUndone
@@ -64,8 +72,9 @@ function HistoryItem({
           )}
 
           {isUndone && (
-            <span className="shrink-0 rounded-md bg-fs-background px-2 py-1 text-xs text-fs-text-muted">
-              ↩ Undone
+            <span className="flex shrink-0 items-center gap-1 rounded-md bg-fs-background px-2 py-1 text-xs text-fs-text-muted">
+              <RotateCcw size={13} strokeWidth={1.8} />
+              Undone
             </span>
           )}
         </div>
@@ -135,7 +144,7 @@ function HistoryItem({
                 : 'text-fs-text-secondary hover:bg-fs-background hover:text-fs-accent'
             }`}
           >
-            <Undo2 size={16} strokeWidth={1.8} />
+            <Undo2 size={16} strokeWidth={1.8} className="shrink-0" />
 
             <span>
               {record.undone === 1 ? 'Undone' : 'Undo'}
