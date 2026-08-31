@@ -10,7 +10,7 @@ function SettingsRow({
   children,
 }: SettingsRowProps) {
   return (
-    <div className="flex items-center justify-between gap-8 border-b border-fs-border px-5 py-4 last:border-b-0">
+    <div className="flex items-center justify-between gap-8 border-b border-fs-border py-5 last:border-b-0">
       <div className="min-w-0">
         <p className="text-sm font-medium text-fs-text-primary">
           {label}

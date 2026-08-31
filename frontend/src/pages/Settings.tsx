@@ -149,6 +149,7 @@ function Settings() {
         title="AI Classification"
         description="Choose how FileSense classifies your files."
       >
+        {/* AI Backend */}
         <SettingsRow
           label="AI Backend"
           description="Choose how files are classified."
@@ -182,52 +183,61 @@ function Settings() {
           </div>
         </SettingsRow>
 
-        {settings.ai_backend === 'local' && (
-          <SettingsRow
-            label="Local Model"
-            description="Ollama model used for classification."
-          >
-            <input
-              type="text"
-              value={settings.local_model}
-              onChange={(event) =>
-                updateSetting(
-                  'local_model',
-                  event.target.value,
-                )
-              }
-              className="w-64 rounded-lg border border-fs-border bg-fs-background px-3 py-2 text-sm text-fs-text-primary outline-none focus:border-fs-accent"
-            />
-          </SettingsRow>
-        )}
+        {/* Local Model */}
+        <SettingsRow
+          label="Local Model"
+          description="Ollama model used for classification."
+        >
+          <input
+            type="text"
+            value={settings.local_model}
+            onChange={(event) =>
+              updateSetting(
+                'local_model',
+                event.target.value,
+              )
+            }
+            disabled={settings.ai_backend !== 'local'}
+            className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
+              settings.ai_backend === 'local'
+                ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
+                : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
+            }`}
+          />
+        </SettingsRow>
 
-        {settings.ai_backend === 'cloud' && (
-          <SettingsRow
-            label="Cloud Provider"
-            description="Provider used for classification."
-          >
-            <input
-              type="text"
-              value={settings.cloud_provider}
-              onChange={(event) =>
-                updateSetting(
-                  'cloud_provider',
-                  event.target.value,
-                )
-              }
-              placeholder="Enter provider"
-              className="w-64 rounded-lg border border-fs-border bg-fs-background px-3 py-2 text-sm text-fs-text-primary outline-none focus:border-fs-accent"
-            />
-          </SettingsRow>
-        )}
+        {/* Cloud Provider */}
+        <SettingsRow
+          label="Cloud Provider"
+          description="Provider used for classification."
+        >
+          <input
+            type="text"
+            value={settings.cloud_provider}
+            onChange={(event) =>
+              updateSetting(
+                'cloud_provider',
+                event.target.value,
+              )
+            }
+            disabled={settings.ai_backend !== 'cloud'}
+            placeholder="Enter provider"
+            className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
+              settings.ai_backend === 'cloud'
+                ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
+                : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
+            }`}
+          />
+        </SettingsRow>
       </SettingsSection>
 
-            {/* Categories */}
-          <SettingsSection
-            title="Categories"
-            description="Folders used for organization."
-          >
-            {/* Existing Categories */}
+        {/* Categories */}
+        <SettingsSection
+          title="Categories"
+          description="Folders used for organization."
+        >
+          {/* Existing Categories */}
+          <div className="max-h-80 overflow-y-auto">
             {Object.entries(settings.categories).map(
               ([key, value]) => (
                 <CategoryRow
@@ -256,80 +266,81 @@ function Settings() {
                 </p>
               </div>
             )}
+          </div>
 
-            {/* Add Category */}
-            {showAddCategory ? (
-              <div className="border-t border-fs-border bg-fs-background/40 p-5">
-                <label className="text-sm font-medium text-fs-text-primary">
-                  New Category
-                </label>
+          {/* Add Category */}
+          {showAddCategory ? (
+            <div className="border-t border-fs-border bg-fs-background/40 p-5">
+              <label className="text-sm font-medium text-fs-text-primary">
+                New Category
+              </label>
 
-                <div className="mt-3 flex gap-2">
-                  <input
-                    type="text"
-                    value={newCategory}
-                    onChange={(event) => {
-                      setNewCategory(event.target.value)
-                      setCategoryError('')
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        handleAddCategory()
-                      }
-                    }}
-                    autoFocus
-                    placeholder="e.g. Work"
-                    className={`min-w-0 flex-1 rounded-lg border bg-fs-surface px-3 py-2 text-sm text-fs-text-primary outline-none ${
-                      categoryError
-                        ? 'border-red-400 focus:border-red-400'
-                        : 'border-fs-border focus:border-fs-accent'
-                    }`}
-                  />
+              <div className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  value={newCategory}
+                  onChange={(event) => {
+                    setNewCategory(event.target.value)
+                    setCategoryError('')
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      handleAddCategory()
+                    }
+                  }}
+                  autoFocus
+                  placeholder="e.g. Work"
+                  className={`min-w-0 flex-1 rounded-lg border bg-fs-surface px-3 py-2 text-sm text-fs-text-primary outline-none ${
+                    categoryError
+                      ? 'border-red-400 focus:border-red-400'
+                      : 'border-fs-border focus:border-fs-accent'
+                  }`}
+                />
 
-                  <button
-                    type="button"
-                    onClick={handleAddCategory}
-                    className="rounded-lg bg-fs-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
-                  >
-                    Add
-                  </button>
+                <button
+                  type="button"
+                  onClick={handleAddCategory}
+                  className="rounded-lg bg-fs-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                >
+                  Add
+                </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNewCategory('')
-                      setCategoryError('')
-                      setShowAddCategory(false)
-                    }}
-                    className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary transition hover:bg-fs-background hover:text-fs-text-primary"
-                  >
-                    Cancel
-                  </button>
-                </div>
-
-                {/* Validation Warning */}
-                {categoryError && (
-                  <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
-                    <span aria-hidden="true">⚠</span>
-                    {categoryError}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="border-t border-fs-border px-5 py-4">
                 <button
                   type="button"
                   onClick={() => {
-                    setShowAddCategory(true)
+                    setNewCategory('')
                     setCategoryError('')
+                    setShowAddCategory(false)
                   }}
-                  className="text-xs font-medium text-fs-accent transition hover:opacity-80"
+                  className="rounded-lg border border-fs-border px-4 py-2 text-sm text-fs-text-secondary transition hover:bg-fs-background hover:text-fs-text-primary"
                 >
-                  + Add Category
+                  Cancel
                 </button>
               </div>
-            )}
-          </SettingsSection>
+
+              {/* Validation Warning */}
+              {categoryError && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
+                  <span aria-hidden="true">⚠</span>
+                  {categoryError}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="border-t border-fs-border px-5 py-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddCategory(true)
+                  setCategoryError('')
+                }}
+                className="text-xs font-medium text-fs-accent transition hover:opacity-80"
+              >
+                + Add Category
+              </button>
+            </div>
+          )}
+        </SettingsSection>
 
           {/* Save */}
           <div className="mt-8 flex items-center justify-end gap-4">

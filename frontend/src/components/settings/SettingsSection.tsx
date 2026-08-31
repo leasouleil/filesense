@@ -10,9 +10,9 @@ function SettingsSection({
   children,
 }: SettingsSectionProps) {
   return (
-    <section className="mt-8">
-      <div className="mb-3">
-        <h2 className="text-sm font-semibold text-fs-text-primary">
+    <section className="mt-10">
+      <div className="mb-5">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-fs-text-secondary">
           {title}
         </h2>
 
@@ -23,7 +23,7 @@ function SettingsSection({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-fs-border bg-fs-surface">
+      <div>
         {children}
       </div>
     </section>
