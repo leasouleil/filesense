@@ -13,6 +13,9 @@ interface SettingsForm {
   local_model: string
   cloud_provider: string
   categories: Record<string, string>
+  start_on_boot: boolean
+  automatic_sorting: boolean
+  theme: 'light' | 'dark' | 'system'
 }
 
 const initialSettings: SettingsForm = {
@@ -30,6 +33,9 @@ const initialSettings: SettingsForm = {
     Forms: 'Forms',
     Installer: 'Installer',
   },
+  start_on_boot: false,
+  automatic_sorting: true,
+  theme: 'system',
 }
 
 function Settings() {
@@ -144,19 +150,19 @@ function Settings() {
         />
       </SettingsSection>
 
-      {/* AI Classification */}
-      <SettingsSection
+    {/* AI Classification */}
+    <SettingsSection
         title="AI Classification"
         description="Choose how FileSense classifies your files."
       >
-        {/* AI Backend */}
-        <SettingsRow
-          label="AI Backend"
-          description="Choose how files are classified."
-        >
-          <div className="flex items-center gap-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
-              <input
+      {/* AI Backend */}
+      <SettingsRow
+        label="AI Backend"
+        description="Choose how files are classified."
+      >
+        <div className="flex items-center gap-4">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
+            <input
                 type="radio"
                 name="ai-backend"
                 value="local"
@@ -166,10 +172,10 @@ function Settings() {
                 }
               />
               Local
-            </label>
+          </label>
 
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
-              <input
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
+            <input
                 type="radio"
                 name="ai-backend"
                 value="cloud"
@@ -179,96 +185,96 @@ function Settings() {
                 }
               />
               Cloud
-            </label>
-          </div>
-        </SettingsRow>
+          </label>
+        </div>
+      </SettingsRow>
 
-        {/* Local Model */}
-        <SettingsRow
-          label="Local Model"
-          description="Ollama model used for classification."
-        >
-          <input
-            type="text"
-            value={settings.local_model}
-            onChange={(event) =>
-              updateSetting(
-                'local_model',
-                event.target.value,
-              )
-            }
-            disabled={settings.ai_backend !== 'local'}
-            className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
-              settings.ai_backend === 'local'
-                ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
-                : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
+      {/* Local Model */}
+      <SettingsRow
+        label="Local Model"
+        description="Ollama model used for classification."
+      >
+        <input
+          type="text"
+          value={settings.local_model}
+          onChange={(event) =>
+            updateSetting(
+              'local_model',
+              event.target.value,
+            )
+          }
+          disabled={settings.ai_backend !== 'local'}
+          className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
+            settings.ai_backend === 'local'
+              ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
+              : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
             }`}
-          />
-        </SettingsRow>
+        />
+      </SettingsRow>
 
-        {/* Cloud Provider */}
-        <SettingsRow
-          label="Cloud Provider"
-          description="Provider used for classification."
-        >
-          <input
-            type="text"
-            value={settings.cloud_provider}
-            onChange={(event) =>
-              updateSetting(
-                'cloud_provider',
-                event.target.value,
-              )
-            }
-            disabled={settings.ai_backend !== 'cloud'}
-            placeholder="Enter provider"
-            className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
-              settings.ai_backend === 'cloud'
-                ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
-                : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
-            }`}
-          />
-        </SettingsRow>
-      </SettingsSection>
+      {/* Cloud Provider */}
+      <SettingsRow
+        label="Cloud Provider"
+        description="Provider used for classification."
+      >
+        <input
+          type="text"
+          value={settings.cloud_provider}
+          onChange={(event) =>
+            updateSetting(
+              'cloud_provider',
+              event.target.value,
+             )
+          }
+          disabled={settings.ai_backend !== 'cloud'}
+          placeholder="Enter provider"
+          className={`w-64 rounded-lg border px-3 py-2 text-sm outline-none transition ${
+            settings.ai_backend === 'cloud'
+              ? 'border-fs-border bg-fs-background text-fs-text-primary focus:border-fs-accent'
+              : 'cursor-not-allowed border-fs-border bg-fs-background/50 text-fs-text-muted opacity-50'
+          }`}
+        />
+      </SettingsRow>
+    </SettingsSection>
 
-        {/* Categories */}
-        <SettingsSection
-          title="Categories"
-          description="Folders used for organization."
-        >
-          {/* Existing Categories */}
-          <div className="max-h-80 overflow-y-auto">
-            {Object.entries(settings.categories).map(
-              ([key, value]) => (
-                <CategoryRow
-                  key={key}
-                  name={key}
-                  value={value}
-                  onChange={(newValue) =>
-                    setSettings((current) => ({
-                      ...current,
-                      categories: {
-                        ...current.categories,
-                        [key]: newValue,
-                      },
-                    }))
-                  }
-                  onRemove={() => handleRemoveCategory(key)}
-                />
-              ),
-            )}
+      {/* Categories */}
+      <SettingsSection
+        title="Categories"
+        description="Folders used for organization."
+      >
+        {/* Existing Categories */}
+        <div className="max-h-80 overflow-y-auto">
+          {Object.entries(settings.categories).map(
+            ([key, value]) => (
+              <CategoryRow
+                key={key}
+                name={key}
+                value={value}
+                onChange={(newValue) =>
+                  setSettings((current) => ({
+                    ...current,
+                    categories: {
+                      ...current.categories,
+                      [key]: newValue,
+                    },
+                  }))
+                }
+                onRemove={() => handleRemoveCategory(key)}
+              />
+            ),
+          )}
 
-            {/* Empty State */}
-            {Object.keys(settings.categories).length === 0 && (
-              <div className="px-5 py-8 text-center">
-                <p className="text-sm text-fs-text-muted">
-                  No categories added.
-                </p>
-              </div>
-            )}
-          </div>
+        {/* Empty State */}
+          {Object.keys(settings.categories).length === 0 && (
+            <div className="px-5 py-8 text-center">
+              <p className="text-sm text-fs-text-muted">
+                No categories added.
+              </p>
+            </div>
+          )}
+        </div>
 
-          {/* Add Category */}
+        {/* Add Category */}
           {showAddCategory ? (
             <div className="border-t border-fs-border bg-fs-background/40 p-5">
               <label className="text-sm font-medium text-fs-text-primary">
@@ -318,8 +324,8 @@ function Settings() {
                 </button>
               </div>
 
-              {/* Validation Warning */}
-              {categoryError && (
+          {/* Validation Warning */}
+            {categoryError && (
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
                   <span aria-hidden="true">⚠</span>
                   {categoryError}
@@ -340,6 +346,121 @@ function Settings() {
               </button>
             </div>
           )}
+        </SettingsSection>
+
+        {/* System */}
+        <SettingsSection
+          title="System"
+          description="Control how FileSense behaves on your computer."
+        >
+          {/* Start on Boot */}
+          <SettingsRow
+            label="Start on Boot"
+            description="Launch FileSense automatically when your PC starts."
+          >
+            <button
+              type="button"
+              role="switch"
+              aria-checked={settings.start_on_boot}
+              onClick={() =>
+                updateSetting(
+                  'start_on_boot',
+                  !settings.start_on_boot,
+                )
+              }
+              className={`relative h-6 w-11 rounded-full transition-colors ${
+                settings.start_on_boot
+                  ? 'bg-fs-accent'
+                  : 'bg-fs-border'
+              }`}
+            >
+              <span
+                className={`absolute left-0 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                  settings.start_on_boot
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </SettingsRow>
+
+          {/* Automatic Sorting */}
+          <SettingsRow
+            label="Automatic Sorting"
+            description="Automatically organize new files into their configured categories."
+          >
+            <button
+              type="button"
+              role="switch"
+              aria-checked={settings.automatic_sorting}
+              onClick={() =>
+                updateSetting(
+                  'automatic_sorting',
+                  !settings.automatic_sorting,
+                )
+              }
+              className={`relative h-6 w-11 rounded-full transition-colors ${
+                settings.automatic_sorting
+                  ? 'bg-fs-accent'
+                  : 'bg-fs-border'
+              }`}
+            >
+              <span
+                className={`absolute left-0 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                  settings.automatic_sorting
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </SettingsRow>
+
+          {/* Theme */}
+          <SettingsRow
+            label="Theme"
+            description="Choose how FileSense looks."
+          >
+            <div className="flex items-center gap-4">
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
+                <input
+                  type="radio"
+                  name="theme"
+                  value="light"
+                  checked={settings.theme === 'light'}
+                  onChange={() =>
+                    updateSetting('theme', 'light')
+                  }
+                />
+                Light
+              </label>
+
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
+                <input
+                  type="radio"
+                  name="theme"
+                  value="dark"
+                  checked={settings.theme === 'dark'}
+                  onChange={() =>
+                    updateSetting('theme', 'dark')
+                  }
+                />
+                Dark
+              </label>
+
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-fs-text-primary">
+                <input
+                  type="radio"
+                  name="theme"
+                  value="system"
+                  checked={settings.theme === 'system'}
+                  onChange={() =>
+                    updateSetting('theme', 'system')
+                  }
+                />
+                System
+              </label>
+            </div>
+          </SettingsRow>
         </SettingsSection>
 
           {/* Save */}

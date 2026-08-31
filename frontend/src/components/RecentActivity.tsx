@@ -57,10 +57,16 @@ function RecentActivity({
 
                   <div className="min-w-0">
                     <div className="flex min-w-0 items-center gap-2">
-                      <p className="truncate text-sm font-medium text-fs-text-primary">
+                      <p
+                        className={`truncate text-sm font-medium ${
+                          record.undone === 1
+                            ? 'text-fs-text-muted line-through'
+                            : 'text-fs-text-primary'
+                        }`}
+                      >
                         {fileName}
                       </p>
-
+                      
                       {fileType && (
                         <span className="shrink-0 rounded-md bg-fs-background px-2 py-0.5 text-[10px] text-fs-text-muted">
                           {fileType}
