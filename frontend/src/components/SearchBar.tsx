@@ -13,7 +13,7 @@ import {
 import FileTypeIcon from './FileTypeIcon'
 
 interface SearchBarProps {
-  onViewAll: (query: string) => void
+  onViewAll?: (query: string) => void
   initialQuery?: string
   showDropdown?: boolean
   onQueryChange?: (query: string) => void
@@ -52,7 +52,7 @@ function SearchBar({
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && query.trim()) {
-              onViewAll(query.trim())
+              onViewAll?.(query.trim())
             }
           }}
           placeholder="Search your files by name or path..."
@@ -106,7 +106,7 @@ function SearchBar({
 
               <button
                 type="button"
-                onClick={() => onViewAll(query.trim())}
+                onClick={() => onViewAll?.(query.trim())}
                 className="w-full px-4 py-3 text-center text-sm text-fs-text-secondary hover:bg-fs-background hover:text-fs-text-primary"
               >
                 View all results →

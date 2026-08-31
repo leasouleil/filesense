@@ -3,7 +3,6 @@ import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Dashboard from '../pages/Dashboard'
 import History from '../pages/History'
-import Search from '../pages/Search'
 import Settings from '../pages/Settings'
 
 function AppLayout() {
@@ -13,10 +12,7 @@ function AppLayout() {
   const renderPage = () => {
     switch (activePage) {
       case 'history':
-        return <History />
-
-      case 'search':
-        return <Search query={searchQuery}/>
+        return <History initialQuery={searchQuery}/>
 
       case 'settings':
         return <Settings />
@@ -27,7 +23,7 @@ function AppLayout() {
           <Dashboard
             onViewAllSearch={(query) => {
               setSearchQuery(query)
-              setActivePage('search')
+              setActivePage('history')
             }}
             onViewAllHistory={() => {
               setActivePage('history')
@@ -41,7 +37,10 @@ function AppLayout() {
     <div className="min-h-screen bg-fs-background text-fs-text-primary">
       <Sidebar
         activePage={activePage}
-        onNavigate={setActivePage}
+        onNavigate={(page) =>{
+          setSearchQuery('')
+          setActivePage(page)
+        }}
       />
 
       <main className="ml-52 min-h-screen p-8">
