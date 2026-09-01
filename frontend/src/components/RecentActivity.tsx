@@ -1,5 +1,6 @@
 import type { HistoryRecord } from '../types/history'
 import { getFileName, getFileExtension } from '../utils/fileUtils'
+import FileTypeIcon from './FileTypeIcon'
 
 interface RecentActivityProps {
   records: HistoryRecord[]
@@ -51,8 +52,8 @@ function RecentActivity({
               >
                 {/* File information */}
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fs-background text-sm">
-                    📄
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center">
+                    <FileTypeIcon extension={fileType} />
                   </div>
 
                   <div className="min-w-0">

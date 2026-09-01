@@ -1,37 +1,27 @@
 import {
-  FileText,
-  FileSpreadsheet,
-  File,
-} from 'lucide-react'
+  getFileTypeIconAsUrl,
+  initializeFileTypeIcons,
+} from '@fluentui/react-file-type-icons'
+
+initializeFileTypeIcons()
 
 interface FileTypeIconProps {
   extension: string
 }
 
 function FileTypeIcon({ extension }: FileTypeIconProps) {
-  const normalizedExtension = extension.toLowerCase()
+  const iconUrl = getFileTypeIconAsUrl({
+    extension: extension.replace('.', ''),
+    size: 32,
+  })
 
-  if (normalizedExtension === 'pdf') {
-    return <FileText size={20} />
-  }
-
-  if (
-    normalizedExtension === 'xlsx' ||
-    normalizedExtension === 'xls' ||
-    normalizedExtension === 'csv'
-  ) {
-    return <FileSpreadsheet size={20} />
-  }
-
-  if (
-    normalizedExtension === 'docx' ||
-    normalizedExtension === 'doc' ||
-    normalizedExtension === 'txt'
-  ) {
-    return <FileText size={20} />
-  }
-
-  return <File size={20} />
+  return (
+    <img
+      src={iconUrl}
+      alt=""
+      className="h-8 w-8 shrink-0"
+    />
+  )
 }
 
 export default FileTypeIcon

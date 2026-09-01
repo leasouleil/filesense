@@ -1,6 +1,6 @@
 import type { HistoryRecord } from '../types/history'
 import { Undo2, RotateCcw } from 'lucide-react'
-import { getFileIcon } from '../utils/fileIcon'
+import FileTypeIcon from './FileTypeIcon'
 
 import {
   getFileExtension,
@@ -20,7 +20,6 @@ function HistoryItem({
 }: HistoryItemProps) {
   const fileName = getFileName(record.new_path)
   const fileType = getFileExtension(record.new_path)
-  const FileIcon = getFileIcon(fileType)
 
   const isUndone = record.undone === 1
 
@@ -35,19 +34,13 @@ function HistoryItem({
   })
 
   return (
-    <div
-      className={`border-b border-fs-border px-5 py-5 last:border-b-0 ${
+    <div className={`border-b border-fs-border px-5 py-5 last:border-b-0 ${
         isUndone ? 'opacity-60' : ''
       }`}
     >
       {/* Summary row */}
-      <div className="flex items-center justify-between gap-6">
-        <div className="flex min-w-0 items-center gap-2">
-          <FileIcon
-            size={17}
-            strokeWidth={1.8}
-            className="shrink-0 text-fs-text-secondary"
-          />
+      <div className="flex min-w-0 items-center gap-3">
+        <FileTypeIcon extension={fileType} />
 
           <p
             className={`min-w-0 truncate text-sm font-medium ${
@@ -82,7 +75,6 @@ function HistoryItem({
         <span className="shrink-0 text-xs text-fs-text-muted">
           {formattedDate}
         </span>
-      </div>
 
       {/* File movement + action */}
       <div className="mt-5 flex items-end justify-between gap-6">

@@ -243,7 +243,7 @@ function Settings() {
         description="Folders used for organization."
       >
         {/* Existing Categories */}
-        <div className="max-h-80 overflow-y-auto">
+        <div className="subtle-scrollbar max-h-80 overflow-y-auto">
           {Object.entries(settings.categories).map(
             ([key, value]) => (
               <CategoryRow

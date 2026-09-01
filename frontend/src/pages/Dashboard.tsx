@@ -76,17 +76,6 @@ function Dashboard({
             FileSense is actively organizing your files.
           </p>
         </div>
-
-        {/* Monitoring Status */}
-        <div className="rounded-lg border border-fs-border bg-fs-surface px-3 py-2">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-
-            <p className="text-xs font-medium text-fs-text-secondary">
-              Monitoring Downloads
-            </p>
-          </div>
-        </div>
       </header>
 
       <SearchBar
