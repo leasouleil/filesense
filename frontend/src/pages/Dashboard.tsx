@@ -7,22 +7,25 @@ import type { HistoryRecord } from '../types/history'
 
 import { getHistory } from '../services/historyService'
 import { searchFiles } from '../services/searchService'
-
+import NeedsReviewPanel from '../components/NeedsReviewPanel'
 
 
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
   onViewAllHistory: () => void
+  onOpenReview: () => void
 }
 
 function Dashboard({ 
   onViewAllSearch, 
-  onViewAllHistory
+  onViewAllHistory,
+  onOpenReview,
 }: DashboardProps) {
 
   const [records, setRecords] = useState<HistoryRecord[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<HistoryRecord[]>([])
+  const [showReviewPanel, setShowReviewPanel] = useState(false)
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -33,10 +36,6 @@ function Dashboard({
 
     loadDashboardData()
   }, [])
-
-    const totalOrganized = records.filter(
-    (record) => record.undone === 0,
-  ).length
 
   const today = new Date().toISOString().slice(0, 10)
 
@@ -86,24 +85,33 @@ function Dashboard({
 
       {/* Statistics */}
       <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-        <StatCard
-          label="Total Organized"
-          value={totalOrganized}
-          description="Files organized"
-        />
+      <StatCard
+        label="Organized Today"
+        value={organizedToday}
+        description="Files organized today"
+        onClick={onViewAllHistory}
+      />
 
-        <StatCard
-          label="Organized Today"
-          value={organizedToday}
-          description="Files organized today"
-        />
+      <StatCard
+        label="Categories"
+        value={Object.keys({
+          Finance: 'Finance',
+          School: 'School',
+          Programming: 'Programming',
+          Personal: 'Personal',
+          Forms: 'Forms',
+          Installer: 'Installer',
+        }).length}
+        description="Organization folders"
+      />
 
-        <StatCard
-          label="Needs Review"
-          value={0}
-          description="Files waiting for review"
-        />
-      </section>
+      <StatCard
+        label="Needs Review"
+        value={3}
+        description="Files requiring attention"
+        onClick={onOpenReview}
+      />
+    </section>
 
       {/* Recent Activity */}
       <div className="mt-10">
@@ -112,6 +120,11 @@ function Dashboard({
         onViewAll={onViewAllHistory}
       />
         </div>
+
+      <NeedsReviewPanel
+        open={showReviewPanel}
+        onClose={() => setShowReviewPanel(false)}
+      />
     </div>
   )
 }
