@@ -7,3 +7,10 @@ export interface HistoryRecord {
   timestamp: string
   undone: number
 }
+
+export type HistoryFilter =
+  | { type: 'all' }
+  | { type: 'today' }
+  | { type: 'week' }
+  | { type: 'month' }
+  | { type: 'category'; value: string }

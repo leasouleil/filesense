@@ -3,7 +3,7 @@ import RecentActivity from '../components/RecentActivity'
 import SearchBar from '../components/SearchBar'
 
 import { useEffect, useState } from 'react'
-import type { HistoryRecord } from '../types/history'
+import type { HistoryFilter, HistoryRecord } from '../types/history'
 
 import { getHistory } from '../services/historyService'
 import { searchFiles } from '../services/searchService'
@@ -12,7 +12,7 @@ import NeedsReviewPanel from '../components/NeedsReviewPanel'
 
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
-  onViewAllHistory: () => void
+  onViewAllHistory: (filter?: HistoryFilter) => void
   onOpenReview: () => void
 }
 
@@ -89,7 +89,7 @@ function Dashboard({
         label="Organized Today"
         value={organizedToday}
         description="Files organized today"
-        onClick={onViewAllHistory}
+        onClick={() => onViewAllHistory({type: 'today'})}
       />
 
       <StatCard
@@ -117,7 +117,7 @@ function Dashboard({
       <div className="mt-10">
       <RecentActivity
         records={records}
-        onViewAll={onViewAllHistory}
+        onViewAll={() => onViewAllHistory()}
       />
         </div>
 
