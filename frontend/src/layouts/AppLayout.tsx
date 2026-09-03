@@ -6,10 +6,20 @@ import History from '../pages/History'
 import Settings from '../pages/Settings'
 import type { HistoryFilter } from '../types/history'
 
+const initialCategories = {
+  Finance: 'Finance',
+  School: 'School',
+  Programming: 'Programming',
+  Personal: 'Personal',
+  Forms: 'Forms',
+  Installer: 'Installer',
+}
+
 function AppLayout() {
   const [activePage, setActivePage] = useState('dashboard')
   const [searchQuery, setSearchQuery] = useState('')
   const [historyFilter, setHistoryFilter] = useState<HistoryFilter | undefined>()
+  const [categories, setCategories] = useState(initialCategories)
 
   const renderPage = () => {
     switch (activePage) {
@@ -18,6 +28,7 @@ function AppLayout() {
           <History
             initialQuery={searchQuery}
             initialFilter={historyFilter}
+            categories={Object.keys(categories)}
           />
         )
 

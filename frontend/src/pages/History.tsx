@@ -6,15 +6,6 @@ import SearchBar from '../components/SearchBar'
 
 import type { HistoryFilter, HistoryRecord } from '../types/history'
 
-const categories = [
-  'Finance',
-  'School',
-  'Programming',
-  'Personal',
-  'Forms',
-  'Installer',
-]
-
 import {
   getHistory,
   undoHistory,
@@ -23,6 +14,7 @@ import {
 interface HistoryProps{
   initialQuery?: string
   initialFilter?: HistoryFilter
+  categories: string[]
 }
 
 function getDateKey(timestamp: string) {
@@ -79,7 +71,7 @@ function isWithinPastDays(timestamp: string, days: number) {
   return difference >= 0 && difference <= days * millisecondsPerDay
 }
 
-function History({initialQuery='', initialFilter,}: HistoryProps) {
+function History({initialQuery='', initialFilter, categories,}: HistoryProps) {
   const [records, setRecords] = useState<HistoryRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(initialQuery)
