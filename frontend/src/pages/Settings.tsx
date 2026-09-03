@@ -5,6 +5,13 @@ import SettingsRow from '../components/settings/SettingsRow'
 import FolderInput from '../components/settings/FolderInput'
 import CategoryRow from '../components/settings/CategoryRow'
 
+interface SettingsProps {
+  categories: Record<string, string>
+  onCategoriesChange: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
+}
+
 interface SettingsForm {
   watch_folder: string
   sorted_folder: string
@@ -12,7 +19,6 @@ interface SettingsForm {
   ai_backend: string
   local_model: string
   cloud_provider: string
-  categories: Record<string, string>
   start_on_boot: boolean
   automatic_sorting: boolean
   theme: 'light' | 'dark' | 'system'
@@ -25,20 +31,15 @@ const initialSettings: SettingsForm = {
   ai_backend: 'local',
   local_model: 'llama3.2',
   cloud_provider: '',
-  categories: {
-    Finance: 'Finance',
-    School: 'School',
-    Programming: 'Programming',
-    Personal: 'Personal',
-    Forms: 'Forms',
-    Installer: 'Installer',
-  },
   start_on_boot: false,
   automatic_sorting: true,
   theme: 'system',
 }
 
-function Settings() {
+function Settings({
+  categories,
+  onCategoriesChange,
+}: SettingsProps) { {
   const [settings, setSettings] =
     useState<SettingsForm>(initialSettings)
 
@@ -65,7 +66,7 @@ function Settings() {
       return
     }
 
-    const categoryExists = Object.keys(settings.categories).some(
+    const categoryExists = Object.keys(categories).some(
       (category) =>
         category.toLowerCase() === categoryName.toLowerCase(),
     )
@@ -77,12 +78,9 @@ function Settings() {
       return
     }
 
-    setSettings((current) => ({
+    onCategoriesChange((current) => ({
       ...current,
-      categories: {
-        ...current.categories,
-        [categoryName]: categoryName,
-      },
+      [categoryName]: categoryName,
     }))
 
     setNewCategory('')
@@ -91,15 +89,12 @@ function Settings() {
   }
 
   const handleRemoveCategory = (category: string) => {
-    setSettings((current) => {
-      const updatedCategories = { ...current.categories }
+    onCategoriesChange((current) => {
+      const updatedCategories = { ...current}
 
       delete updatedCategories[category]
 
-      return {
-        ...current,
-        categories: updatedCategories,
-      }
+      return updatedCategories
     })
   }
 
@@ -244,19 +239,16 @@ function Settings() {
       >
         {/* Existing Categories */}
         <div className="subtle-scrollbar max-h-80 overflow-y-auto">
-          {Object.entries(settings.categories).map(
+          {Object.entries(categories).map(
             ([key, value]) => (
               <CategoryRow
                 key={key}
                 name={key}
                 value={value}
                 onChange={(newValue) =>
-                  setSettings((current) => ({
+                  onCategoriesChange((current) => ({
                     ...current,
-                    categories: {
-                      ...current.categories,
-                      [key]: newValue,
-                    },
+                    [key]: newValue,
                   }))
                 }
                 onRemove={() => handleRemoveCategory(key)}
@@ -265,7 +257,7 @@ function Settings() {
           )}
 
         {/* Empty State */}
-          {Object.keys(settings.categories).length === 0 && (
+          {Object.keys(categories).length === 0 && (
             <div className="px-5 py-8 text-center">
               <p className="text-sm text-fs-text-muted">
                 No categories added.
@@ -482,5 +474,6 @@ function Settings() {
         </div>
       )
     }
-
+  }
+  
 export default Settings

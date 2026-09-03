@@ -6,7 +6,7 @@ import History from '../pages/History'
 import Settings from '../pages/Settings'
 import type { HistoryFilter } from '../types/history'
 
-const initialCategories = {
+const initialCategories: Record<string, string> = {
   Finance: 'Finance',
   School: 'School',
   Programming: 'Programming',
@@ -33,7 +33,12 @@ function AppLayout() {
         )
 
       case 'settings':
-        return <Settings />
+        return (
+          <Settings
+            categories={categories}
+            onCategoriesChange={setCategories}
+          />
+        )
 
       case 'dashboard':
       default:
