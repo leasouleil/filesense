@@ -5,21 +5,15 @@ import Dashboard from '../pages/Dashboard'
 import History from '../pages/History'
 import Settings from '../pages/Settings'
 import type { HistoryFilter } from '../types/history'
+import { defaultSettings } from '../config/defaultSettings'
+import type { SettingsForm } from '../types/settings'
 
-const initialCategories: Record<string, string> = {
-  Finance: 'Finance',
-  School: 'School',
-  Programming: 'Programming',
-  Personal: 'Personal',
-  Forms: 'Forms',
-  Installer: 'Installer',
-}
 
 function AppLayout() {
   const [activePage, setActivePage] = useState('dashboard')
   const [searchQuery, setSearchQuery] = useState('')
   const [historyFilter, setHistoryFilter] = useState<HistoryFilter | undefined>()
-  const [categories, setCategories] = useState(initialCategories)
+  const [settings, setSettings] = useState<SettingsForm>(defaultSettings)
 
   const renderPage = () => {
     switch (activePage) {
@@ -28,15 +22,15 @@ function AppLayout() {
           <History
             initialQuery={searchQuery}
             initialFilter={historyFilter}
-            categories={Object.keys(categories)}
+            categories={Object.keys(settings.categories)}
           />
         )
 
       case 'settings':
         return (
           <Settings
-            categories={categories}
-            onCategoriesChange={setCategories}
+            settings={settings}
+            onSettingsChange={setSettings}
           />
         )
 

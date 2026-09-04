@@ -1,47 +1,23 @@
 import { useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 import SettingsSection from '../components/settings/SettingsSection'
 import SettingsRow from '../components/settings/SettingsRow'
 import FolderInput from '../components/settings/FolderInput'
 import CategoryRow from '../components/settings/CategoryRow'
+import type { SettingsForm } from '../types/settings'
 
 interface SettingsProps {
-  categories: Record<string, string>
-  onCategoriesChange: React.Dispatch<
-    React.SetStateAction<Record<string, string>>
-  >
+  settings: SettingsForm
+  onSettingsChange: Dispatch<SetStateAction<SettingsForm>>
 }
 
-interface SettingsForm {
-  watch_folder: string
-  sorted_folder: string
-  log_level: string
-  ai_backend: string
-  local_model: string
-  cloud_provider: string
-  start_on_boot: boolean
-  automatic_sorting: boolean
-  theme: 'light' | 'dark' | 'system'
-}
-
-const initialSettings: SettingsForm = {
-  watch_folder: 'Downloads_Test',
-  sorted_folder: 'Sorted',
-  log_level: 'INFO',
-  ai_backend: 'local',
-  local_model: 'llama3.2',
-  cloud_provider: '',
-  start_on_boot: false,
-  automatic_sorting: true,
-  theme: 'system',
-}
 
 function Settings({
-  categories,
-  onCategoriesChange,
-}: SettingsProps) { {
-  const [settings, setSettings] =
-    useState<SettingsForm>(initialSettings)
+  settings: savedSettings,
+  onSettingsChange,
+}: SettingsProps) { 
+  const [settings, setSettings] = useState<SettingsForm>(savedSettings)
 
   const [newCategory, setNewCategory] = useState('')
   const [showAddCategory, setShowAddCategory] = useState(false)
@@ -66,7 +42,7 @@ function Settings({
       return
     }
 
-    const categoryExists = Object.keys(categories).some(
+    const categoryExists = Object.keys(settings.categories).some(
       (category) =>
         category.toLowerCase() === categoryName.toLowerCase(),
     )
@@ -78,9 +54,12 @@ function Settings({
       return
     }
 
-    onCategoriesChange((current) => ({
+    setSettings((current) => ({
       ...current,
-      [categoryName]: categoryName,
+      categories: {
+        ...current.categories,
+        [categoryName]: categoryName,
+      },
     }))
 
     setNewCategory('')
@@ -89,24 +68,29 @@ function Settings({
   }
 
   const handleRemoveCategory = (category: string) => {
-    onCategoriesChange((current) => {
-      const updatedCategories = { ...current}
+    setSettings((current) => {
+      const updatedCategories = { ...current.categories}
 
       delete updatedCategories[category]
 
-      return updatedCategories
+      return {
+        ...current,
+        categories: updatedCategories
+       }   
     })
   }
 
   const handleSave = () => {
-  console.log('Settings to save:', settings)
+    onSettingsChange(settings)
 
-  setSaveMessage('Settings saved successfully.')
+    console.log('Settings to save:', settings)
 
-  setTimeout(() => {
-    setSaveMessage('')
-  }, 3000)
-}
+    setSaveMessage('Settings saved successfully.')
+
+    setTimeout(() => {
+      setSaveMessage('')
+    }, 3000)
+  }
 
   return (
     <div className="mx-auto max-w-4xl pb-10">
@@ -239,16 +223,19 @@ function Settings({
       >
         {/* Existing Categories */}
         <div className="subtle-scrollbar max-h-80 overflow-y-auto">
-          {Object.entries(categories).map(
+          {Object.entries(settings.categories).map(
             ([key, value]) => (
               <CategoryRow
                 key={key}
                 name={key}
                 value={value}
                 onChange={(newValue) =>
-                  onCategoriesChange((current) => ({
+                  setSettings((current) => ({
                     ...current,
+                    categories: {
+                    ...current.categories,
                     [key]: newValue,
+                    },
                   }))
                 }
                 onRemove={() => handleRemoveCategory(key)}
@@ -257,7 +244,7 @@ function Settings({
           )}
 
         {/* Empty State */}
-          {Object.keys(categories).length === 0 && (
+          {Object.keys(settings.categories).length === 0 && (
             <div className="px-5 py-8 text-center">
               <p className="text-sm text-fs-text-muted">
                 No categories added.
@@ -474,6 +461,5 @@ function Settings({
         </div>
       )
     }
-  }
-  
+
 export default Settings
