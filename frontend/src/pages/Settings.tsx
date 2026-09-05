@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 
 import SettingsSection from '../components/settings/SettingsSection'
@@ -10,13 +10,22 @@ import type { SettingsForm } from '../types/settings'
 interface SettingsProps {
   settings: SettingsForm
   onSettingsChange: Dispatch<SetStateAction<SettingsForm>>
+  onUnsavedChanges: (hasChanges: boolean) => void
 }
 
+export interface SettingsHandle {
+  saveChanges: () => void
+}
 
-function Settings({
-  settings: savedSettings,
-  onSettingsChange,
-}: SettingsProps) { 
+const Settings = forwardRef<SettingsHandle, SettingsProps>(
+  (
+    {
+      settings: savedSettings,
+      onSettingsChange,
+      onUnsavedChanges,
+    },
+    ref,
+  ) => {
   const [settings, setSettings] = useState<SettingsForm>(savedSettings)
 
   const [newCategory, setNewCategory] = useState('')
@@ -82,6 +91,7 @@ function Settings({
 
   const handleSave = () => {
     onSettingsChange(settings)
+    onUnsavedChanges(false)
 
     console.log('Settings to save:', settings)
 
@@ -91,6 +101,17 @@ function Settings({
       setSaveMessage('')
     }, 3000)
   }
+
+  useImperativeHandle(ref, () => ({
+  saveChanges: handleSave,
+  }))
+
+  const hasUnsavedChanges = 
+    JSON.stringify(settings) !== JSON.stringify(savedSettings)
+  
+  useEffect(() => {
+    onUnsavedChanges(hasUnsavedChanges)
+  }, [hasUnsavedChanges, onUnsavedChanges])
 
   return (
     <div className="mx-auto max-w-4xl pb-10">
@@ -460,6 +481,7 @@ function Settings({
           </div>
         </div>
       )
-    }
+    },
+  )
 
 export default Settings
