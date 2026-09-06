@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-
 @import "tailwindcss";
 
 @theme {
@@ -15,32 +14,28 @@
   --color-fs-accent-hover: var(--fs-accent-hover);
 }
 
-/* Midnight Blue + Cyan */
+/* Light theme */
 :root {
-  --fs-background: #0b1120;
-  --fs-sidebar: #0f172a;
-  --fs-surface: #111c33;
-  --fs-border: #1e3a5f;
-
-  --fs-text-primary: #e6f7ff;
-  --fs-text-secondary: #94a3b8;
-  --fs-text-muted: #64748b;
-
-  --fs-accent: #22d3ee;
-  --fs-accent-hover: #06b6d4;
+  --fs-background: #f8fafc;
+  --fs-sidebar: #ffffff;
+  --fs-surface: #ffffff;
+  --fs-border: #e2e8f0;
+  --fs-text-primary: #0f172a;
+  --fs-text-secondary: #64748b;
+  --fs-text-muted: #94a3b8;
+  --fs-accent: #0891b2;
+  --fs-accent-hover: #0e7490;
 }
 
-/* Dark mode */
+/* Dark theme */
 .dark {
   --fs-background: #0b1120;
   --fs-sidebar: #0f172a;
   --fs-surface: #111c33;
   --fs-border: #1e3a5f;
-
   --fs-text-primary: #e6f7ff;
   --fs-text-secondary: #94a3b8;
   --fs-text-muted: #64748b;
-
   --fs-accent: #22d3ee;
   --fs-accent-hover: #06b6d4;
 }
@@ -92,3 +87,4 @@ body {
 .subtle-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--fs-text-muted);
 }
+

@@ -15,6 +15,7 @@ interface SettingsProps {
 
 export interface SettingsHandle {
   saveChanges: () => void
+  discardChanges: () => void
 }
 
 const Settings = forwardRef<SettingsHandle, SettingsProps>(
@@ -102,9 +103,15 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
     }, 3000)
   }
 
+  const discardChanges = () => {
+  setSettings(savedSettings)
+  onUnsavedChanges(false)
+}
+
   useImperativeHandle(ref, () => ({
   saveChanges: handleSave,
-  }))
+  discardChanges,
+}))
 
   const hasUnsavedChanges = 
     JSON.stringify(settings) !== JSON.stringify(savedSettings)
