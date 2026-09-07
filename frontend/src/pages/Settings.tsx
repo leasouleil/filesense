@@ -11,6 +11,7 @@ interface SettingsProps {
   settings: SettingsForm
   onSettingsChange: Dispatch<SetStateAction<SettingsForm>>
   onUnsavedChanges: (hasChanges: boolean) => void
+  onThemePreview: (theme: SettingsForm['theme']) => void
 }
 
 export interface SettingsHandle {
@@ -24,6 +25,7 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
       settings: savedSettings,
       onSettingsChange,
       onUnsavedChanges,
+      onThemePreview,
     },
     ref,
   ) => {
@@ -92,6 +94,7 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
 
   const handleSave = () => {
     onSettingsChange(settings)
+    onThemePreview(settings.theme)
     onUnsavedChanges(false)
 
     console.log('Settings to save:', settings)
@@ -105,6 +108,7 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
 
   const discardChanges = () => {
   setSettings(savedSettings)
+  onThemePreview(savedSettings.theme)
   onUnsavedChanges(false)
 }
 
@@ -434,9 +438,10 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
                   name="theme"
                   value="light"
                   checked={settings.theme === 'light'}
-                  onChange={() =>
+                  onChange={() => {
                     updateSetting('theme', 'light')
-                  }
+                    onThemePreview('light')
+                  }}
                 />
                 Light
               </label>
@@ -447,9 +452,10 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
                   name="theme"
                   value="dark"
                   checked={settings.theme === 'dark'}
-                  onChange={() =>
+                  onChange={() => {
                     updateSetting('theme', 'dark')
-                  }
+                    onThemePreview('dark')
+                  }}
                 />
                 Dark
               </label>
@@ -460,9 +466,10 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
                   name="theme"
                   value="system"
                   checked={settings.theme === 'system'}
-                  onChange={() =>
+                  onChange={() => {
                     updateSetting('theme', 'system')
-                  }
+                    onThemePreview('system')
+                  }}
                 />
                 System
               </label>

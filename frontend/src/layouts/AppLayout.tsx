@@ -6,17 +6,13 @@ import UnsavedChangesModal from '../components/UnsavedChangesModal'
 import Dashboard from '../pages/Dashboard'
 import History from '../pages/History'
 import Settings, {
+  type SettingsHandle,
 } from '../pages/Settings'
 
 import type { HistoryFilter } from '../types/history'
 
 import { defaultSettings } from '../config/defaultSettings'
 import type { SettingsForm } from '../types/settings'
-
-export interface SettingsHandle {
-  saveChanges: () => void
-  discardChanges: () => void
-}
 
 function AppLayout() {
   const [activePage, setActivePage] = useState('dashboard')
@@ -30,19 +26,20 @@ function AppLayout() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [pendingPage, setPendingPage] = useState<string | null>(null)
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
+  const [previewTheme, setPreviewTheme] = useState<SettingsForm['theme']>(
+  defaultSettings.theme
+  )
 
   useEffect(() => {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
   const applyTheme = () => {
     const isDark =
-      settings.theme === 'dark' ||
-      (settings.theme === 'system' && mediaQuery.matches)
+      previewTheme === 'dark' ||
+      (previewTheme === 'system' && mediaQuery.matches)
 
     document.documentElement.classList.toggle('dark', isDark)
   }
-
-  
 
   applyTheme()
 
@@ -51,7 +48,7 @@ function AppLayout() {
   return () => {
     mediaQuery.removeEventListener('change', applyTheme)
   }
-}, [settings.theme])
+}, [previewTheme])
 
   const navigateTo = (page: string) => {
     setSearchQuery('')
@@ -114,6 +111,7 @@ function AppLayout() {
             settings={settings}
             onSettingsChange={setSettings}
             onUnsavedChanges={setHasUnsavedChanges}
+            onThemePreview={setPreviewTheme}
           />
         )
 
