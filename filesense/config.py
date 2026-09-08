@@ -28,12 +28,16 @@ DEFAULT_CONFIG = {
         "Forms": "Forms",
         "Installer": "Installer",
     },
+    "start_on_boot": False,
+    "automatic_sorting": True,
+    "theme": "system",
 }
 
 
 def _load() -> dict:
     if not CONFIG_PATH.exists():
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
         if CONFIG_EXAMPLE_PATH.exists():
             shutil.copy(CONFIG_EXAMPLE_PATH, CONFIG_PATH)
         else:
@@ -41,7 +45,21 @@ def _load() -> dict:
                 json.dump(DEFAULT_CONFIG, f, indent=4)
 
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+        loaded_config = json.load(f)
+
+    # Add new default settings if they are missing
+    updated = False
+
+    for key, value in DEFAULT_CONFIG.items():
+        if key not in loaded_config:
+            loaded_config[key] = value
+            updated = True
+
+    if updated:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(loaded_config, f, indent=4)
+
+    return loaded_config
 
 
 config = _load()

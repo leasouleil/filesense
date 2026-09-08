@@ -13,20 +13,18 @@ import NeedsReviewPanel from '../components/NeedsReviewPanel'
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
   onViewAllHistory: (filter?: HistoryFilter) => void
-  onOpenReview: () => void
 }
 
 function Dashboard({ 
   onViewAllSearch, 
   onViewAllHistory,
-  onOpenReview,
 }: DashboardProps) {
 
   const [records, setRecords] = useState<HistoryRecord[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<HistoryRecord[]>([])
   const [showReviewPanel, setShowReviewPanel] = useState(false)
-
+  
   useEffect(() => {
     const loadDashboardData = async () => {
       const history = await getHistory()
@@ -109,7 +107,7 @@ function Dashboard({
         label="Needs Review"
         value={3}
         description="Files requiring attention"
-        onClick={onOpenReview}
+        onClick={() => setShowReviewPanel(true)}
       />
     </section>
 

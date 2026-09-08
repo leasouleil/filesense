@@ -33,6 +33,7 @@ class SettingsUpdate(BaseModel):
     local_model: str
     cloud_provider: str
     cloud_api_key: str = ""
+    local_base_url: str = "http://localhost:11434"
     categories: dict[str, str]
     start_on_boot: bool = False
     automatic_sorting: bool = True
@@ -46,7 +47,10 @@ def get_config():
 
 @app.put("/api/config")
 def update_config(settings: SettingsUpdate):
-    updated_config = settings.model_dump()
+    updated_config = {
+        **config,
+        **settings.model_dump(),
+    }
 
     save_config(updated_config)
 

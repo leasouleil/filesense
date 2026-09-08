@@ -12,6 +12,7 @@ import Settings, {
 import type { HistoryFilter } from '../types/history'
 
 import { defaultSettings } from '../config/defaultSettings'
+import { getSettings } from '../services/settingsService'
 import type { SettingsForm } from '../types/settings'
 
 function AppLayout() {
@@ -22,13 +23,35 @@ function AppLayout() {
   >()
 
   const [settings, setSettings] = useState<SettingsForm>(defaultSettings)
-
+  const [isSettingsLoading, setIsSettingsLoading] = useState(true)
+  const [settingsLoadError, setSettingsLoadError] = useState('')
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [pendingPage, setPendingPage] = useState<string | null>(null)
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
   const [previewTheme, setPreviewTheme] = useState<SettingsForm['theme']>(
   defaultSettings.theme
   )
+
+  useEffect(() => {
+  const loadSettings = async () => {
+    try {
+      setSettingsLoadError('')
+
+      const loadedSettings = await getSettings()
+
+      setSettings(loadedSettings)
+      setPreviewTheme(loadedSettings.theme)
+    } catch (error) {
+      console.error('Failed to load settings:', error)
+      setSettingsLoadError('Could not load FileSense settings.')
+    } finally {
+      setIsSettingsLoading(false)
+    }
+  }
+
+  loadSettings()
+}, [])
+  
 
   useEffect(() => {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -78,8 +101,12 @@ function AppLayout() {
   setPendingPage(null)
   }
 
-  const handleApplyChanges = () => {
-  settingsRef.current?.saveChanges()
+  const handleApplyChanges = async () => {
+  const success = await settingsRef.current?.saveChanges()
+
+  if (!success) {
+    return
+  }
 
   setHasUnsavedChanges(false)
   setShowUnsavedWarning(false)
@@ -89,7 +116,7 @@ function AppLayout() {
   }
 
   setPendingPage(null)
-  }
+}
 
   const settingsRef = useRef<SettingsHandle>(null)
 
@@ -105,8 +132,28 @@ function AppLayout() {
         )
 
       case 'settings':
+        if (isSettingsLoading) {
+          return (
+            <div className="mx-auto max-w-4xl pb-10">
+              <p className="text-sm text-fs-text-secondary">
+                Loading settings...
+              </p>
+            </div>
+          )
+        }
+
+        if (settingsLoadError) {
+          return (
+            <div className="mx-auto max-w-4xl pb-10">
+              <p className="text-sm text-red-400">
+                {settingsLoadError}
+              </p>
+            </div>
+          )
+        }
+
         return (
-         <Settings
+          <Settings
             ref={settingsRef}
             settings={settings}
             onSettingsChange={setSettings}

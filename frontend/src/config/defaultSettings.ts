@@ -6,7 +6,9 @@ export const defaultSettings: SettingsForm = {
   log_level: 'INFO',
   ai_backend: 'local',
   local_model: 'llama3.2',
+  local_base_url: 'http://localhost:11434',
   cloud_provider: '',
+  cloud_api_key: '',
   categories: {
     Finance: 'Finance',
     School: 'School',

@@ -1,4 +1,10 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
+
 import type { Dispatch, SetStateAction } from 'react'
 
 import SettingsSection from '../components/settings/SettingsSection'
@@ -6,6 +12,7 @@ import SettingsRow from '../components/settings/SettingsRow'
 import FolderInput from '../components/settings/FolderInput'
 import CategoryRow from '../components/settings/CategoryRow'
 import type { SettingsForm } from '../types/settings'
+import { saveSettings } from '../services/settingsService'
 
 interface SettingsProps {
   settings: SettingsForm
@@ -15,7 +22,7 @@ interface SettingsProps {
 }
 
 export interface SettingsHandle {
-  saveChanges: () => void
+  saveChanges: () => Promise<boolean>
   discardChanges: () => void
 }
 
@@ -35,6 +42,9 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
   const [showAddCategory, setShowAddCategory] = useState(false)
   const [categoryError, setCategoryError] = useState('')
   const [saveMessage, setSaveMessage] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
 
   const updateSetting = <K extends keyof SettingsForm>(
     key: K,
@@ -92,19 +102,33 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
     })
   }
 
-  const handleSave = () => {
-    onSettingsChange(settings)
-    onThemePreview(settings.theme)
-    onUnsavedChanges(false)
+  const handleSave = async (): Promise<boolean> => {
+  try {
+    setIsSaving(true)
+    setErrorMessage('')
 
-    console.log('Settings to save:', settings)
+    const savedSettings = await saveSettings(settings)
+
+    onSettingsChange(savedSettings)
+    onThemePreview(savedSettings.theme)
+    onUnsavedChanges(false)
+    setSettings(savedSettings)
 
     setSaveMessage('Settings saved successfully.')
 
     setTimeout(() => {
       setSaveMessage('')
     }, 3000)
+
+    return true
+  } catch (error) {
+    console.error('Failed to save settings:', error)
+    setErrorMessage('Could not save settings.')
+    return false
+  } finally {
+    setIsSaving(false)
   }
+}
 
   const discardChanges = () => {
   setSettings(savedSettings)
@@ -123,6 +147,7 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
   useEffect(() => {
     onUnsavedChanges(hasUnsavedChanges)
   }, [hasUnsavedChanges, onUnsavedChanges])
+
 
   return (
     <div className="mx-auto max-w-4xl pb-10">
@@ -477,6 +502,12 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
           </SettingsRow>
         </SettingsSection>
 
+        {errorMessage && (
+          <p className="mt-4 text-xs text-red-400">
+            {errorMessage}
+          </p>
+        )}
+
           {/* Save */}
           <div className="mt-8 flex items-center justify-end gap-4">
             {saveMessage && (
@@ -488,9 +519,10 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
             <button
               type="button"
               onClick={handleSave}
+              disabled={isSaving}
               className="rounded-lg bg-fs-accent px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
             >
-              Save Changes
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </div>
