@@ -7,7 +7,7 @@
 - [/] Design dashboard
 - [/] Design history
 - [/] Design search
-- [ ] Design settings
+- [/] Design settings
 
 ## React
 - [/] Initialize React + Vite
@@ -16,11 +16,11 @@
 - [/] Build dashboard
 - [/] Build history
 - [/] Build search
-- [ ] Build settings
+- [/] Build settings
 
 ## Tauri
-- [ ] Initialize Tauri
-- [ ] Connect React frontend
+- [/] Initialize Tauri
+- [/] Connect React frontend
 - [ ] Connect FileSense backend
 
 ## Integration
