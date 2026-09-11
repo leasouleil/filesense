@@ -6,6 +6,19 @@
     "main"
   ],
   "permissions": [
-    "core:default"
-  ]
+  "core:default",
+  {
+    "identifier": "shell:allow-spawn",
+    "allow": [
+      {
+        "name": "binaries/filesense-backend",
+        "sidecar": true,
+        "args": true
+      }
+    ]
+  },
+  {
+    "identifier": "shell:allow-kill"
+  }
+]
 }

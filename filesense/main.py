@@ -12,7 +12,7 @@ import filesense.config as config_module
 from filesense.database import Database
 
 
-db = Database(config_module.config["db_path"])
+db = Database(config_module.resolve_path(config_module.config["db_path"]))
 
 IGNORED_EXTENSIONS = (".tmp", ".crdownload", ".part")
 
@@ -102,7 +102,7 @@ def process_file(filepath: str) -> None:
 
     folder_name = config["categories"].get(category, category)
     destination_folder = os.path.join(
-        config["sorted_folder"],
+        config_module.resolve_path(config["sorted_folder"]),
         folder_name,
     )
 
@@ -166,7 +166,7 @@ def start_watcher() -> bool:
 
         config = config_module.config
 
-        watch_folder = config["watch_folder"]
+        watch_folder = config_module.resolve_path(config["watch_folder"])
 
         if not watch_folder or not os.path.isdir(watch_folder):
             logger.error(

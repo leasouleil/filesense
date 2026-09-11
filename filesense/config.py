@@ -1,10 +1,32 @@
 import json
 import shutil
 from pathlib import Path
+import sys
 
-CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
-CONFIG_PATH = CONFIG_DIR / "config.json"
-CONFIG_EXAMPLE_PATH = CONFIG_DIR / "config.example.json"
+if getattr(sys, "frozen", False):
+    # Packaged with PyInstaller.
+    # User-editable config lives beside the executable.
+    BASE_DIR = Path(sys.executable).resolve().parent
+
+    CONFIG_DIR = BASE_DIR / "config"
+    CONFIG_PATH = CONFIG_DIR / "config.json"
+
+    # PyInstaller's bundled data lives under _internal.
+    BUNDLED_CONFIG_PATH = (
+        Path(getattr(sys, "_MEIPASS", BASE_DIR))
+        / "config"
+        / "config.json"
+    )
+
+    CONFIG_EXAMPLE_PATH = BUNDLED_CONFIG_PATH
+
+else:
+    # Normal development.
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    CONFIG_DIR = BASE_DIR / "config"
+    CONFIG_PATH = CONFIG_DIR / "config.json"
+    CONFIG_EXAMPLE_PATH = CONFIG_DIR / "config.example.json"
 
 DEFAULT_CONFIG = {
     "watch_folder": "",
@@ -63,6 +85,15 @@ def _load() -> dict:
 
 
 config = _load()
+
+def resolve_path(path: str) -> str:
+    """Resolve a configured path relative to the FileSense application directory."""
+    path_obj = Path(path)
+
+    if path_obj.is_absolute():
+        return str(path_obj)
+
+    return str(BASE_DIR / path_obj)
 
 
 def save_config(updated_config: dict = None) -> None:
