@@ -13,6 +13,7 @@ import FolderInput from '../components/settings/FolderInput'
 import CategoryRow from '../components/settings/CategoryRow'
 import type { SettingsForm } from '../types/settings'
 import { saveSettings } from '../services/settingsService'
+import { open } from '@tauri-apps/plugin-dialog'
 
 interface SettingsProps {
   settings: SettingsForm
@@ -55,6 +56,30 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
       [key]: value,
     }))
   }
+
+  const handleBrowseWatchFolder = async () => {
+  const selected = await open({
+    directory: true,
+    multiple: false,
+    title: 'Select Watch Folder',
+  })
+
+  if (typeof selected === 'string') {
+    updateSetting('watch_folder', selected)
+  }
+}
+
+const handleBrowseSortedFolder = async () => {
+  const selected = await open({
+    directory: true,
+    multiple: false,
+    title: 'Select Sorted Folder',
+  })
+
+  if (typeof selected === 'string') {
+    updateSetting('sorted_folder', selected)
+  }
+}
 
   const handleAddCategory = () => {
     const categoryName = newCategory.trim()
@@ -174,8 +199,8 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
           onChange={(value) =>
             updateSetting('watch_folder', value)
           }
+          onBrowse={handleBrowseWatchFolder}
         />
-
         <FolderInput
           label="Sorted Folder"
           description="Destination for organized files."
@@ -183,6 +208,7 @@ const Settings = forwardRef<SettingsHandle, SettingsProps>(
           onChange={(value) =>
             updateSetting('sorted_folder', value)
           }
+          onBrowse={handleBrowseSortedFolder}
         />
       </SettingsSection>
 
