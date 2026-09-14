@@ -12,8 +12,6 @@ import filesense.config as config_module
 from filesense.database import Database
 
 
-db = Database(config_module.resolve_path(config_module.config["db_path"]))
-
 IGNORED_EXTENSIONS = (".tmp", ".crdownload", ".part")
 
 _observer = None
@@ -74,7 +72,7 @@ def safe_move(
     return False
 
 
-def process_file(filepath: str) -> None:
+def process_file(filepath: str, database: Database) -> None:
     if not wait_until_stable(filepath):
         logger.info(
             "Skipping %s — file not stable or disappeared.",
@@ -127,7 +125,7 @@ def process_file(filepath: str) -> None:
     moved = safe_move(filepath, destination_file)
 
     if moved:
-        db.save_history(
+        database.save_history(
             filepath,
             destination_file,
             category,
@@ -148,12 +146,14 @@ def process_file(filepath: str) -> None:
 
 class DownloadHandler(FileSystemEventHandler):
 
+    def __init__(self, database):
+        self.database = database
+
     def on_created(self, event):
         if event.is_directory:
             return
 
-        process_file(event.src_path)
-
+        process_file(event.src_path, self.database)
 
 def start_watcher() -> bool:
     """Start the FileSense watchdog observer."""
@@ -175,7 +175,11 @@ def start_watcher() -> bool:
             )
             return False
 
-        event_handler = DownloadHandler()
+        db = Database(
+        config_module.resolve_path(config["db_path"])
+        )
+
+        event_handler = DownloadHandler(db)
 
         observer = Observer()
 

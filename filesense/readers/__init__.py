@@ -13,6 +13,7 @@ from filesense.readers.docx_reader import DocxReader
 from filesense.readers.xlsx_reader import XlsxReader
 from filesense.readers.image_reader import ImageReader
 from filesense.readers.exe_reader import ExeReader
+from filesense.readers.pptx_reader import PptxReader
 
 READERS = {
     ".pdf": PdfReader(),
@@ -22,6 +23,7 @@ READERS = {
     ".jpeg": ImageReader(),
     ".png": ImageReader(),
     ".exe": ExeReader(),
+    ".pptx": PptxReader(),
 }
 
 

@@ -2,13 +2,16 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from filesense.config import config, save_config
+import filesense.config as config_module
 from filesense.services.history_service import (
     get_history,
     search_history,
     get_history_record,
     undo_history,
 )
+
+from filesense.main import start_watcher, stop_watcher
+from filesense.logger import logger
 
 app = FastAPI(
     title="FileSense API",
@@ -46,23 +49,31 @@ class SettingsUpdate(BaseModel):
 
 @app.get("/api/config")
 def get_config():
-    return config
+    return config_module.config
 
 
 @app.put("/api/config")
 def update_config(settings: SettingsUpdate):
     updated_config = {
-        **config,
+        **config_module.config,
         **settings.model_dump(),
     }
 
-    save_config(updated_config)
+    stop_watcher()
+
+    config_module.save_config(updated_config)
+
+    if not start_watcher():
+        logger.error("FileSense watcher could not be restarted.")
+        raise HTTPException(
+            status_code=500,
+            detail="Settings were saved, but FileSense could not restart the watcher.",
+        )
 
     return {
         "success": True,
         "config": updated_config,
     }
-
 
 @app.get("/api/history")
 def history(
