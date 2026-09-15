@@ -25,3 +25,13 @@ export async function apiRequest<T>(
 
   return response.json()
 }
+
+export interface FileSenseStatus {
+  watcher_running: boolean
+  watch_folder: string
+  automatic_sorting: boolean
+}
+
+export async function getStatus(): Promise<FileSenseStatus> {
+  return apiRequest<FileSenseStatus>('/api/status')
+}
