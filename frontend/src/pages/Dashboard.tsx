@@ -9,6 +9,8 @@ import { getHistory } from '../services/historyService'
 import { searchFiles } from '../services/searchService'
 import NeedsReviewPanel from '../components/NeedsReviewPanel'
 
+import { getStatus } from '../services/api'
+
 
 interface DashboardProps {
   onViewAllSearch: (query: string) => void
@@ -24,6 +26,7 @@ function Dashboard({
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<HistoryRecord[]>([])
   const [showReviewPanel, setShowReviewPanel] = useState(false)
+  const [watcherRunning, setWatcherRunning] = useState<boolean | null>(null)
   
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -59,6 +62,24 @@ function Dashboard({
   runSearch()
 }, [searchQuery])
 
+  useEffect(() => {
+  const fetchStatus = async () => {
+    try {
+      const status = await getStatus()
+      setWatcherRunning(status.watcher_running)
+    } catch (error) {
+      console.error('Failed to fetch FileSense status:', error)
+      setWatcherRunning(false)
+    }
+  }
+
+  fetchStatus()
+
+  const interval = setInterval(fetchStatus, 2000)
+
+  return () => clearInterval(interval)
+}, [])
+
 
   return (
     <div className="mx-auto max-w-6xl pb-10">
@@ -70,7 +91,11 @@ function Dashboard({
           </h1>
 
           <p className="mt-1 text-sm text-fs-text-secondary">
-            FileSense is actively organizing your files.
+            {watcherRunning === null
+              ? 'Checking FileSense status...'
+              : watcherRunning
+                ? 'FileSense is actively organizing your files.'
+                : 'FileSense is not currently watching your folder.'}
           </p>
         </div>
       </header>

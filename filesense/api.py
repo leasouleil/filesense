@@ -10,7 +10,11 @@ from filesense.services.history_service import (
     undo_history,
 )
 
-from filesense.main import start_watcher, stop_watcher
+from filesense.main import (
+    start_watcher,
+    stop_watcher,
+    is_watcher_running,
+)
 from filesense.logger import logger
 
 app = FastAPI(
@@ -22,6 +26,20 @@ app = FastAPI(
 def health():
     return {"status": "ok"}
 
+@app.get("/api/status")
+def get_status():
+    config = config_module.config
+
+    return {
+        "watcher_running": is_watcher_running(),
+        "watch_folder": config_module.resolve_path(
+            config["watch_folder"]
+        ),
+        "automatic_sorting": config.get(
+            "automatic_sorting",
+            True,
+        ),
+    }
 
 app.add_middleware(
     CORSMiddleware,

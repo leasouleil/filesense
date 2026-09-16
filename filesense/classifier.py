@@ -1,9 +1,10 @@
 from pathlib import Path
 
 from filesense.logger import logger
-from filesense.config import config
 from filesense.readers import get_reader
 from filesense.ai import get_backend
+
+import filesense.config as config_module
 
 
 def classify(filepath: str) -> dict:
@@ -27,6 +28,7 @@ def classify(filepath: str) -> dict:
 
     extracted["filename"] = Path(filepath).name
 
+    config = config_module.config
     backend = get_backend(config)
     result = backend.categorize(extracted)
 
