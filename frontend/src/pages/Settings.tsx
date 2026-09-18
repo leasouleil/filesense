@@ -14,6 +14,7 @@ import CategoryRow from '../components/settings/CategoryRow'
 import type { SettingsForm } from '../types/settings'
 import { saveSettings } from '../services/settingsService'
 import { open } from '@tauri-apps/plugin-dialog'
+import { setAutostartEnabled } from '../services/autostartService'
 
 interface SettingsProps {
   settings: SettingsForm
@@ -133,6 +134,8 @@ const handleBrowseSortedFolder = async () => {
     setErrorMessage('')
 
     const savedSettings = await saveSettings(settings)
+
+    await setAutostartEnabled(savedSettings.start_on_boot)
 
     onSettingsChange(savedSettings)
     onThemePreview(savedSettings.theme)
